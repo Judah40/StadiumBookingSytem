@@ -1,63 +1,21 @@
 'use client'
 
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 // pages/index.js
 import Head from "next/head";
 import DashboardLayout from "@/components/DashboardLayout";
-import { supabase } from "@/app/Auth/supabase";
+import { Supa, supabase } from "@/app/Auth/supabase";
 function Users() {
   // Sample data
-  const data = [
-    {
-      id: 1,
-      email: "john@example.com",
-      username: "john_doe",
-      phoneNumber: "123-456-7890",
-    },
-    {
-      id: 2,
-      email: "jane@example.com",
-      username: "jane_doe",
-      phoneNumber: "987-654-3210",
-    },
-    {
-      id: 3,
-      email: "jane@example.com",
-      username: "jane_doe",
-      phoneNumber: "987-654-3210",
-    },
-    {
-      id: 4,
-      email: "jane@example.com",
-      username: "jane_doe",
-      phoneNumber: "987-654-3210",
-    },
-    {
-      id: 5,
-      email: "jane@example.com",
-      username: "jane_doe",
-      phoneNumber: "987-654-3210",
-    },
-    {
-      id: 6,
-      email: "jane@example.com",
-      username: "jane_doe",
-      phoneNumber: "987-654-3210",
-    },
-    {
-      id: 7,
-      email: "jane@example.com",
-      username: "jane_doe",
-      phoneNumber: "987-654-3210",
-    },
-    // ... more data
-  ];
+  const [users, setUsers]=useState<any[]>([])
+ 
 
   useEffect(()=>{
-    supabase.from('auth.users').select('*').then((value)=>{
-console.log(value)
-})
+    Supa.auth.admin.listUsers().then((val:any)=>{
+setUsers(val.data.users)
+console.log(val.data.users)
+    })
   },[])
   return (
     <DashboardLayout>
@@ -87,7 +45,7 @@ console.log(value)
               </tr>
             </thead>
             <tbody>
-              {data.map((item) => (
+              {users &&(users.map((item:any) => (
                 <tr key={item.id}>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     {item.id}
@@ -110,7 +68,7 @@ console.log(value)
                   </button>
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>
