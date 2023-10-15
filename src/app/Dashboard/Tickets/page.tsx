@@ -1,31 +1,36 @@
 'use client'
 
 import DashboardLayout from "@/components/DashboardLayout";
-import React from "react";
-import { useFormik } from 'formik';
+import React, { useEffect, useState } from "react";
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { supabase } from "@/app/Auth/supabase";
+
+
+const SignupSchema = Yup.object().shape({
+  team1: Yup.string()
+    .min(2, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+  team2: Yup.string()
+    .min(2, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+  numberOfTicket: Yup.number()
+    .min(1, 'Too few tickets')
+    .required('Required'),
+  date: Yup.date()
+    .required('Required'),
+});
 function Tickets() {
 
-    const formik = useFormik({
-        initialValues: {
-          teamA: '',
-          teamAFlag: null,
-          teamB: '',
-          teamBFlag: null,
-          numberOfTickets: 0,
-        },
-        validationSchema: Yup.object({
-          teamA: Yup.string().required('Required'),
-          teamAFlag: Yup.mixed().required('A file is required'),
-          teamB: Yup.string().required('Required'),
-          teamBFlag: Yup.mixed().required('A file is required'),
-          numberOfTickets: Yup.number().min(1, 'At least 1 ticket is required').required('Required'),
-        }),
-        onSubmit: (values) => {
-          console.log(values);
-          // Handle form submission, e.g., upload to server.
-        },
-      });
+const getData=async()=>{
+
+const data =await supabase
+.from('Ticket')
+.select('*')
+return data
+}
   // Sample data
   const matches = [
     {
@@ -103,8 +108,13 @@ function Tickets() {
     // ... more matches
   ];
 
-
+const [tickets, setTickets]=useState<any[]>([])
   
+  useEffect(()=>{
+getData().then((val:any)=>{
+  setTickets(val.data)
+})
+  },[])
   return (
     <DashboardLayout>
         <div className="flex flex-col space-y-8">
@@ -114,85 +124,46 @@ function Tickets() {
 
 
 <div className="border p-4 bg-blue-200">
+<Formik
+        initialValues={{
+          team1: '',
+          team2: '',
+          numberOfTicket: '',
+          date: '',
+        }}
+        validationSchema={SignupSchema}
+        onSubmit={(values) => {
+          console.log(values)
+         supabase.from('Ticket').insert([{
+          ticket_number:values.numberOfTicket,
+          team1:values.team1,
+          team2:values.team2,
+          date:values.date
+         }]).then((val)=>{
+console.log(val.status)
+         })
+        }}
+      >
+        {({ isSubmitting }) => (
+          <Form className="flex flex-col space-y-4">
+            <Field type="text" name="team1" placeholder="Team 1" className="border p-2" />
+            <ErrorMessage name="team1" component="div" className="text-red-500" />
 
-      <form onSubmit={formik.handleSubmit} className="bg-white rounded-lg shadow-md p-8 max-w-lg mx-auto space-y-4">
+            <Field type="text" name="team2" placeholder="Team 2" className="border p-2" />
+            <ErrorMessage name="team2" component="div" className="text-red-500" />
 
-        <div>
-            Generate Ticket
-        </div>
+            <Field type="number" name="numberOfTicket" placeholder="Number of Tickets" className="border p-2" />
+            <ErrorMessage name="numberOfTicket" component="div" className="text-red-500" />
 
-        
-        {/* For simplicity, the validation error messages and field-related logic are omitted. 
-             You should extend this for a more complete implementation. */}
-             
-        
+            <Field type="date" name="date" className="border p-2" />
+            <ErrorMessage name="date" component="div" className="text-red-500" />
 
-        <div>
-          <label htmlFor="teamA" className="block text-gray-700 text-sm font-bold mb-2">Team A:</label>
-          <input 
-            id="teamA"
-            name="teamA"
-            type="text"
-            onChange={formik.handleChange}
-            value={formik.values.teamA}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="teamAFlag" className="block text-gray-700 text-sm font-bold mb-2">Team A Flag:</label>
-          <input 
-            id="teamAFlag"
-            name="teamAFlag"
-            type="file"
-            onChange={(event) => {
-              formik.setFieldValue("teamAFlag", event.currentTarget.files ? event.currentTarget.files[0] : null);
-            }}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="teamB" className="block text-gray-700 text-sm font-bold mb-2">Team B:</label>
-          <input 
-            id="teamB"
-            name="teamB"
-            type="text"
-            onChange={formik.handleChange}
-            value={formik.values.teamB}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="teamBFlag" className="block text-gray-700 text-sm font-bold mb-2">Team B Flag:</label>
-          <input 
-            id="teamBFlag"
-            name="teamBFlag"
-            type="file"
-            onChange={(event) => {
-              formik.setFieldValue("teamBFlag", event.currentTarget.files ? event.currentTarget.files[0] : null);
-            }}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="numberOfTickets" className="block text-gray-700 text-sm font-bold mb-2">Number of Tickets:</label>
-          <input 
-            id="numberOfTickets"
-            name="numberOfTickets"
-            type="number"
-            onChange={formik.handleChange}
-            value={formik.values.numberOfTickets}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
-        <div className="flex justify-end">
-          <button type="submit" className="bg-blue-500 text-white p-2 rounded">Submit</button>
-        </div>
-      </form>
+            <button type="submit" disabled={isSubmitting} className="bg-blue-500 text-white p-2 rounded">
+              Submit
+            </button>
+          </Form>
+        )}
+      </Formik>
 
 </div>
 
@@ -225,20 +196,20 @@ function Tickets() {
             </tr>
           </thead>
           <tbody>
-            {matches.map((item) => (
+            {tickets && (tickets.map((item:any) => (
               <tr key={item.id}>
                 <td className="px-4 py-3 border-b text-sm">{item.id}</td>
                 <td className="px-4 py-3 border-b text-sm flex space-x-4 items-center">
                   <div className="grid grid-cols-1 place-items-center">
                     <img src="/countries/spain.png"/>
-                    {item.matchTeam1}</div>
+                    {item.team1}</div>
                   <div>vs</div>
                   <div className="grid grid-cols-1 place-items-center">
                   <img src="/countries/portugal.png"/>
-                    {item.matchTeam2}</div>
+                    {item.team2}</div>
                 </td>
                 <td className="px-4 py-3 border-b text-sm">
-                  {item.numberOfTickets}
+                  {item.ticket_number}
                 </td>
                 <td className="px-4 py-3 border-b text-sm">
                   {item.ticketsSold}
@@ -248,7 +219,7 @@ function Tickets() {
                 </td>
                 <td className="px-4 py-3 border-b text-sm">{item.date}</td>
               </tr>
-            ))}
+            )))}
           </tbody>
         </table>
       </div>
