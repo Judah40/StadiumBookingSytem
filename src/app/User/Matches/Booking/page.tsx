@@ -9,6 +9,7 @@ import { supabase } from "@/app/Auth/supabase";
 import QRCode from "qrcode.react";
 import dynamic from "next/dynamic";
 import { ImCancelCircle } from "react-icons/im";
+import { QrReader } from 'react-qr-reader';
 
 function Booking({
   searchParams,
@@ -27,13 +28,16 @@ function Booking({
     return data;
   };
   const [qrValue, setQrValue] = useState<string | null>(null);
+  const [data, setData] = useState('No result');
 
 
 
   const downloadQR = () => {
+    console.log(canvasRef)
     if (canvasRef.current) {
       // create a "dummy" anchor element
       const link = document.createElement('a');
+      console.log(link)
       // get the canvas as data URL
       link.href = (canvasRef.current as any).toDataURL();
       // provide the name for the file
@@ -47,9 +51,8 @@ function Booking({
 
   const handleGenerateQRCode = async () => {
     // This URL is supposed to be your backend endpoint that validates the QR code
-    const uniqueQRCodeValue =
-      "http://your-backend-url/validate_qr?code=uniqueCode123";
-    setQrValue(uniqueQRCodeValue);
+ 
+    setQrValue(`${email} `);
 
     // Here, you'd typically also make a call to your backend to register
     // the unique QR code value in your database along with its validity status.
@@ -119,10 +122,10 @@ function Booking({
       <Navigation />
 
       {/**rest of the body  */}
-      <div className="flex flex-1 flex-col h-screen">
+      <div className="flex flex-1 flex-col h-screen bg-gray-400 bg-contain">
         <div className="grid grid-cols-1 md:grid-cols-2 flex-1   place-items-center ">
           <div className=" w-full h-full flex flex-col justify-center items-center">
-            <div className=" p-4 md:p-0 md:h-[500px] mt-4 mb-4 md:m-0 w-10/12  space-y-2 bg-gray-200 border border-gray-300 flex flex-col place-items-center justify-center ">
+            <div className=" p-4 md:p-0 md:h-[500px] mt-4 mb-4 md:m-0 w-10/12  space-y-12 bg-gray-200 border border-gray-300 flex flex-col place-items-center justify-center ">
               <div className="bg-gray-300 p-6 flex flex-col items-center space-y-6 ">
                 {/* header */}
                 <div>Sierra Leone Premiership</div>
@@ -336,11 +339,12 @@ function Booking({
         </div>
         <div className="w-full flex flex-col items-center">
 
+
           <QRCode value={qrValue} ref={canvasRef} />
         <h1>
           Please Scan qrcode
           </h1>  
-        <button onClick={()=>downloadQR()} type="button" className="w-full h-12 bg-green-500 rounded-full text-white">
+        <button onClick={()=>{downloadQR()}} type="button" className="w-full h-12 bg-green-500 rounded-full text-white">
 download qrcode
         </button>
         </div>
