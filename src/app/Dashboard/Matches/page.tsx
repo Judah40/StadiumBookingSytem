@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { supabase } from "@/app/Auth/supabase";
+import {ImCancelCircle} from "react-icons/im"
 
 
 
@@ -17,6 +18,8 @@ type values ={
 }
 
  const  Matches:React.FC=()=> {
+
+  const [showPopUp, setShowPopUp] = useState(false)
   //get data
   const data = async () => {
     let data = await supabase.from("Matches").select("*");
@@ -126,7 +129,29 @@ const [error, setError] = useState<string | null>(null);
       <h1 className="text-xl">Main Matches</h1>
       {/* Add your dashboard content here */}
 
-      <div className="border p-4 bg-blue-200">
+
+
+      {showPopUp?  <div
+      className="popup-container fixed inset-0 flex justify-center
+    items-center bg-gray-900 bg-opacity-70 z-50 overflow-y-auto"
+    >
+      <div className="popup p-6 flex flex-col justify-center rounded-lg shadow-md bg-white w-5/6 relative">
+        <div className="w-11/12  h-12  flex items-center justify-end">
+          <button 
+          onClick={()=>
+            setShowPopUp(false)
+          }
+          >
+          <ImCancelCircle className="text-2xl text-red-500 hover:text-red-800"/>
+          </button>
+        </div>
+
+
+
+
+
+
+        <div className="border p-4 bg-blue-200">
         <form
           onSubmit={formik.handleSubmit}
           className="w-full max-w-lg mx-auto "
@@ -227,6 +252,16 @@ const [error, setError] = useState<string | null>(null);
           </button>
         </form>
       </div>
+      </div>{" "}
+    </div>:null}
+
+
+
+
+
+
+
+     
 
       <div className="container mx-auto p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -235,7 +270,7 @@ const [error, setError] = useState<string | null>(null);
           {value && (value.map((match:any) => (
             <div
               key={match.id}
-              className="border rounded-lg p-4 shadow-lg bg-green-500"
+              className="border rounded-lg p-4 shadow-lg bg-blue-500"
             >
               <div className="text-xl font-bold mb-2 flex space-x-4 text-white  items-center justify-center">
                 <div>
@@ -256,6 +291,14 @@ const [error, setError] = useState<string | null>(null);
           )))}
         </div>
       </div>
+
+      <div className="w-32 h-12  ">
+        <button type="button" onClick={()=>{
+          setShowPopUp(true)
+        }} className="w-full h-full bg-green-500 rounded-xl text-sm text-white hover:bg-green-400">
+            Add Match
+        </button>
+  </div>
     </DashboardLayout>
   );
 }

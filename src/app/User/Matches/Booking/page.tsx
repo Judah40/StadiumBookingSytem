@@ -2,11 +2,14 @@
 
 import Navigation from "@/components/Navigation";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { loadScript } from "@paypal/paypal-js";
-import {PayPalButton} from "react-paypal-button-v2"
-import QRCode from "qrcode"
+import { PayPalButton } from "react-paypal-button-v2";
 import { supabase } from "@/app/Auth/supabase";
+import QRCode from "qrcode.react";
+import dynamic from "next/dynamic";
+import { ImCancelCircle } from "react-icons/im";
+
 function Booking({
   searchParams,
 }: {
@@ -22,51 +25,77 @@ function Booking({
   const getUsername = async () => {
     const data = await supabase.auth.getSession();
     return data;
-  };  
-  const generateQRCode = ()=>{
-    const data =[searchParams.team1,searchParams.team2, ticketNumber, selectedOption,email ]
-   QRCode.toDataURL(JSON.stringify(data)).then(setQRcode)
-  }
+  };
+  const [qrValue, setQrValue] = useState<string | null>(null);
+
+
+
+  const downloadQR = () => {
+    if (canvasRef.current) {
+      // create a "dummy" anchor element
+      const link = document.createElement('a');
+      // get the canvas as data URL
+      link.href = (canvasRef.current as any).toDataURL();
+      // provide the name for the file
+      link.download = 'qrcode.png';
+      // simulate clicking the anchor link
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  const handleGenerateQRCode = async () => {
+    // This URL is supposed to be your backend endpoint that validates the QR code
+    const uniqueQRCodeValue =
+      "http://your-backend-url/validate_qr?code=uniqueCode123";
+    setQrValue(uniqueQRCodeValue);
+
+    // Here, you'd typically also make a call to your backend to register
+    // the unique QR code value in your database along with its validity status.
+  };
 
   //state
-  const [scriptLoaded, setScriptLoaded]= useState(false)
+  const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [showPopup, setShowPopup] = useState("");
+  const canvasRef = useRef(null);
+
 
   //lpaypal
 
-  const addPayment=()=>{
-if(window.paypal){
-    setScriptLoaded(true)
-    return
-}
+  const addPayment = () => {
+    if (window.paypal) {
+      setScriptLoaded(true);
+      return;
+    }
 
-    const script = document.createElement("script")
-    script.src ="https://www.paypal.com/sdk/js?client-id=AYdQd0uldBlNQuOEpB56FDbYAIKi_AT0lUWMP9V7M3KCgJGwvB0iBJaxXRBvRothSu6K3i3-Qv3s-2SJ"
+    const script = document.createElement("script");
+    script.src =
+      "https://www.paypal.com/sdk/js?client-id=AYdQd0uldBlNQuOEpB56FDbYAIKi_AT0lUWMP9V7M3KCgJGwvB0iBJaxXRBvRothSu6K3i3-Qv3s-2SJ";
 
-    script.type="text/javascript";
-    script.async=true
-    script.onload=()=>setScriptLoaded(true)
-    document.body.appendChild(script)
-  }
+    script.type = "text/javascript";
+    script.async = true;
+    script.onload = () => setScriptLoaded(true);
+    document.body.appendChild(script);
+  };
 
-//   loadScript({"clientId":process.env.PAYPAL_CLIENT_ID}).then((paypal)=>{
-// console.log(paypal)
-//   }).catch((err)=>{
-//     console.log(err)
-//   })
+  //   loadScript({"clientId":process.env.PAYPAL_CLIENT_ID}).then((paypal)=>{
+  // console.log(paypal)
+  //   }).catch((err)=>{
+  //     console.log(err)
+  //   })
 
-const [amount, setAmount]= useState(0)
+  const [amount, setAmount] = useState(0);
   const [selectedOption, setSelectedOption] = useState("");
   const [ticketNumber, setTicketNumber] = useState<any | null>(null);
   const [email, setEmail] = useState<any | null>(null);
   const [qrcode, setQRcode] = useState<any | null>(null);
 
+
   const handleSelectChange = (e: any) => {
     setSelectedOption(e.target.value);
-  };
-  const PricePerTicket: number = 150;
-
-  const SubmitValue = () => {
-    if (selectedOption === "VIP") {
+    const selected = e.target.value;
+    if (selected === "VIP") {
       const total = PricePerTicket + 100;
       const Price = total * ticketNumber;
       console.log(Price);
@@ -76,19 +105,14 @@ const [amount, setAmount]= useState(0)
       setAmount(PricePerTicket * ticketNumber);
     }
   };
+  const PricePerTicket: number = 150;
 
-
-
-
-  useEffect(()=>{
-
-
-
-    getUsername().then((value)=>{
-      setEmail(value.data.session?.user.id)
-    })
-addPayment()
-  },[])
+  useEffect(() => {
+    getUsername().then((value) => {
+      setEmail(value.data.session?.user.id);
+    });
+    addPayment();
+  }, []);
   return (
     <div className="w-full ">
       {/* Navigation */}
@@ -145,8 +169,11 @@ addPayment()
 
           {/* Payment section */}
 
-          <div className=" w-full h-full flex flex-col justify-center items-center">
-            <div className="  w-10/12  bg-gray-200 flex flex-col items-center justify-center space-y-4 p-2">
+          <div className=" w-full h-full flex flex-col justify-center items-center ">
+            <div className="  w-10/12 md:h-[500px]   flex flex-col items-center  space-y-4 pt-12 bg-gray-200">
+              <div className="w-9/12">
+                <h1 className="text-xl font-thin">Payment Check Out</h1>
+              </div>
               <div className="w-9/12 flex">
                 <h1 className="font-semibold">Price for VIP Ticket:</h1>
                 <div className="flex-1  flex justify-end">
@@ -185,7 +212,7 @@ addPayment()
                       val.preventDefault();
                       setTicketNumber(val.target.value);
 
-                            const value:any = val.target.value
+                      const value: any = val.target.value;
 
                       if (selectedOption === "VIP") {
                         const total = PricePerTicket + 100;
@@ -202,42 +229,126 @@ addPayment()
               </div>
 
               <div className="w-9/12 flex">
-                    <div>
-                        <p>Total:</p>
-                    </div>
+                <div>
+                  <p>Total:</p>
+                </div>
 
-                    <div>
-                        <p>{amount}</p>
-                    </div>
+                <div>
+                  <p>Le {amount}</p>
+                </div>
               </div>
 
               {/* button */}
               <div className="w-9/12">
-
                 {/* {scriptLoaded && amount?<PayPalButton
                 
                 amount={amount}
                 />:<h1>Please Choose field...</h1>} */}
 
                 <button
-                className="w-20 h-12 rounded bg-blue-500"
-                onClick={()=>{
-                  if(selectedOption && ticketNumber ){
-
-                    generateQRCode()
-                  }else{
-                    alert("please select ticket type or ticket number")
-                  }
-                }}>
-                  press
+                  className="w-24 text-white h-12 rounded bg-blue-500"
+                  onClick={() => {
+                    if (selectedOption && ticketNumber) {
+                      setShowPopup("payment");
+                    } else {
+                      alert("please select ticket type or ticket number");
+                    }
+                  }}
+                >
+                  proceed
                 </button>
-               
               </div>
             </div>
           </div>
         </div>
       </div>
-      <img src={qrcode}/>
+      {showPopup === "payment" ? (
+        <div
+          className="popup-container fixed inset-0 flex justify-center
+    items-center bg-gray-900 bg-opacity-70 z-50 overflow-y-auto"
+        >
+          <div className="popup p-6 flex flex-col justify-center rounded-lg shadow-md bg-white w-2/6 relative space-y-4">
+            <div className="w-11/12  h-12  flex items-center justify-end">
+              <button onClick={() => setShowPopup("")}>
+                <ImCancelCircle className="text-2xl text-red-500 hover:text-red-800" />
+              </button>
+            </div>
+
+            <h1>
+              <span className="font-bold">Total</span>:Le {amount}
+            </h1>
+
+            {/* Orange money */}
+            <div className="w-full h-20 ">
+              <button
+                onClick={() => {
+                  handleGenerateQRCode();
+                  setShowPopup("qrcode");
+                }}
+                type="button"
+                className="w-full h-full bg-orange-500 hover:bg-orange-400 rounded-full flex justify-center"
+              >
+                <img
+                  src="/orange.png"
+                  alt="orange money"
+                  className="w-40 h-full"
+                />
+              </button>
+            </div>
+            {/* Afri money */}
+            <div className="w-full h-20 ">
+              <button
+                type="button"
+                onClick={() => {
+                  handleGenerateQRCode();
+                  setShowPopup("qrcode");
+                }}
+                className="w-full h-full bg-pink-900 hover:bg-pink-700 rounded-full flex justify-center"
+              >
+                <img
+                  src="/afrimoney.png"
+                  alt="orange money"
+                  className="w-40 h-full"
+                />
+              </button>
+            </div>
+          </div>{" "}
+        </div>
+      ) : showPopup === "qrcode" ? (
+        qrValue && 
+        
+        
+        <div
+      className="popup-container fixed inset-0 flex justify-center
+    items-center bg-gray-900 bg-opacity-70 z-50 overflow-y-auto"
+    >
+      <div className="popup p-6 flex flex-col justify-center rounded-lg shadow-md bg-white  md:w-1/6 relative">
+        <div className="w-11/12  h-12  flex items-center justify-end">
+          <button 
+          onClick={()=>
+            setShowPopup("")
+          }
+          >
+          <ImCancelCircle className="text-2xl text-red-500 hover:text-red-800"/>
+          </button>
+
+
+        </div>
+        <div className="w-full flex flex-col items-center">
+
+          <QRCode value={qrValue} ref={canvasRef} />
+        <h1>
+          Please Scan qrcode
+          </h1>  
+        <button onClick={()=>downloadQR()} type="button" className="w-full h-12 bg-green-500 rounded-full text-white">
+download qrcode
+        </button>
+        </div>
+
+      </div>{" "}
+    </div>
+        
+      ) : null}
     </div>
   );
 }

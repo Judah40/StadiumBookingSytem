@@ -1,5 +1,9 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+
+import {BiSolidDashboard} from 'react-icons/bi'
+import {FaUsers, FaTicketAlt} from "react-icons/fa"
+import {GiSoccerKick} from "react-icons/gi"
 type Props = {
   values: string;
   isActive: boolean;
@@ -21,11 +25,11 @@ const SidebarButton: React.FC<Props> = ({ values, isActive }) => {
 
     }}
       href={isDashActive}
-      className={`mb-2 border w-full h-12 items-center justify-center flex hover:bg-blue-500 ${
-        isActive && "bg-blue-500"
+      className={`mb-2  w-full h-12 items-center  flex hover: ${
+        isActive && "text-[#1DE782]"
       }`}
     >
-      {values}
+    {values==="Dashboard"?<BiSolidDashboard className="text-xl w-20"/>:(values==="Users"? <FaUsers className=" text-xl w-20"/>:(values==="Matches"? <GiSoccerKick className="text-xl w-20"/>:<FaTicketAlt className="text-xl w-20"/>))}  {values}
     </Link>
   );
 };
