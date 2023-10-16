@@ -7,6 +7,9 @@ import { Graph } from "@/components/LineChart";
 
 function DashboardPage() {
 
+
+
+  
   const matchesData = [
     { date: '2023-01-01', team1: 'Spain', team2: 'France', score: '2-1' },
     { date: '2023-01-02', team1: 'PSG', team2: 'Monaco', score: '1-1' },
@@ -22,60 +25,60 @@ function DashboardPage() {
       {/* header */}
       <div className="flex md:space-x-40 flex-col md:flex-row pt-4 ">
         {/* card1 */}
-        <div className="border rounded-lg border-gray-200 shadow-lg w-80 h-60 flex flex-col p-4 space-y-4">
+        <div className="border rounded-lg bg-blue-400 border-gray-300 shadow-lg w-80 h-60 flex flex-col p-4 space-y-4">
           <div>
-            <h1 className="font-light text-gray-500">
+            <h1 className="font-light text-gray-700">
               Total Number Of Tickets
             </h1>
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-blue-500">{"12"}</h1>
+            <h1 className="text-2xl font-semibold text-white">{"12"}</h1>
           </div>
           <div>
-            <h1 className=" font-light text-gray-500">Total Price Expected</h1>
+            <h1 className=" font-light text-gray-700">Total Price Expected</h1>
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-blue-500">
-              {"$12,000"}
+            <h1 className="text-2xl font-semibold text-white">
+              {"Le12,000"}
             </h1>
           </div>
         </div>
 
         {/* card2 */}
 
-        <div className="border rounded-lg border-gray-200 shadow-lg w-80 h-60 flex flex-col p-4 space-y-4">
+        <div className="border rounded-lg bg-blue-400 border-gray-300 shadow-lg w-80 h-60 flex flex-col p-4 space-y-4">
           <div>
-            <h1 className="font-light text-gray-500">
+            <h1 className="font-light text-gray-700">
               Total Number Of Tickets left
             </h1>
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-blue-500">{"4"}</h1>
+            <h1 className="text-2xl font-semibold text-white">{"4"}</h1>
           </div>
           <div>
-            <h1 className=" font-light text-gray-500">Total Price Expected</h1>
+            <h1 className=" font-light text-gray-700">Total Price Expected</h1>
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-blue-500">{"$2,000"}</h1>
+            <h1 className="text-2xl font-semibold text-white">{"Le2,000"}</h1>
           </div>
         </div>
         {/* card3 */}
 
-        <div className="border rounded-lg border-gray-200 shadow-lg w-80 h-60 flex flex-col p-4 space-y-4">
+        <div className="border rounded-lg bg-blue-400 border-gray-300 shadow-lg w-80 h-60 flex flex-col p-4 space-y-4">
           <div>
-            <h1 className="font-light text-gray-500">
+            <h1 className="font-light text-gray-700">
               Total Number Of Tickets Sold
             </h1>
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-blue-500">{"8"}</h1>
+            <h1 className="text-2xl font-semibold text-white">{"8"}</h1>
           </div>
           <div>
-            <h1 className=" font-light text-gray-500">Total Price</h1>
+            <h1 className=" font-light text-gray-700">Total Price</h1>
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-blue-500">
-              {"$10,000"}
+            <h1 className="text-2xl font-semibold text-white">
+              {"Le10,000"}
             </h1>
           </div>
         </div>

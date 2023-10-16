@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { supabase } from "@/app/Auth/supabase";
+import {ImCancelCircle} from "react-icons/im"
 
 
 const SignupSchema = Yup.object().shape({
@@ -31,85 +32,11 @@ const data =await supabase
 .select('*')
 return data
 }
-  // Sample data
-  const matches = [
-    {
-      id: 1,
-      matchTeam1: "Team A",
-      matchTeam2: "Team B",
-      numberOfTickets: 100,
-      ticketsSold: 50,
-      ticketsLeft: 50,
-      date: "2023-11-20",
-    },
-    {
-      id: 2,
-      matchTeam1: "Team C",
-      matchTeam2: "Team B",
-      numberOfTickets: 200,
-      ticketsSold: 100,
-      ticketsLeft: 100,
-      date: "2023-11-21",
-    },
-    {
-      id: 3,
-      matchTeam1: "Team C",
-      matchTeam2: "Team B",
-      numberOfTickets: 200,
-      ticketsSold: 100,
-      ticketsLeft: 100,
-      date: "2023-11-21",
-    },
-    {
-      id: 4,
-      matchTeam1: "Team C",
-      matchTeam2: "Team B",
-      numberOfTickets: 200,
-      ticketsSold: 100,
-      ticketsLeft: 100,
-      date: "2023-11-21",
-    },
-    {
-      id: 5,
-      matchTeam1: "Team C",
-      matchTeam2: "Team B",
-      numberOfTickets: 200,
-      ticketsSold: 100,
-      ticketsLeft: 100,
-      date: "2023-11-21",
-    },
-    {
-      id: 6,
-      matchTeam1: "Team C",
-      matchTeam2: "Team B",
-      numberOfTickets: 200,
-      ticketsSold: 100,
-      ticketsLeft: 100,
-      date: "2023-11-21",
-    },
-    {
-      id: 7,
-      matchTeam1: "Team C",
-      matchTeam2: "Team B",
-      numberOfTickets: 200,
-      ticketsSold: 100,
-      ticketsLeft: 100,
-      date: "2023-11-21",
-    },
-    {
-      id: 8,
-      matchTeam1: "Team C",
-      matchTeam2: "Team B",
-      numberOfTickets: 200,
-      ticketsSold: 100,
-      ticketsLeft: 100,
-      date: "2023-11-21",
-    },
-    // ... more matches
-  ];
+
 
 const [tickets, setTickets]=useState<any[]>([])
-  
+const [showPopup, setShowPopup] = useState(false);
+
   useEffect(()=>{
 getData().then((val:any)=>{
   setTickets(val.data)
@@ -123,7 +50,22 @@ getData().then((val:any)=>{
       {/* Add your dashboard content here */}
 
 
-<div className="border p-4 bg-blue-200">
+{showPopup? <div
+      className="popup-container fixed inset-0 flex justify-center
+    items-center bg-gray-900 bg-opacity-70 z-50 overflow-y-auto"
+    >
+      <div className="popup p-6 flex flex-col justify-center rounded-lg shadow-md bg-white w-5/6 relative">
+        <div className="w-11/12  h-12  flex items-center justify-end">
+          <button 
+          onClick={()=>
+            setShowPopup(false)
+          }
+          >
+          <ImCancelCircle className="text-2xl text-red-500 hover:text-red-800"/>
+          </button>
+        </div>
+
+        <div className="border p-4 bg-blue-200">
 <Formik
         initialValues={{
           team1: '',
@@ -141,6 +83,10 @@ getData().then((val:any)=>{
           date:values.date
          }]).then((val)=>{
 console.log(val.status)
+if(val.status ===201){
+  alert('Successfully created a new Ticket')
+  setShowPopup(false)
+}
          })
         }}
       >
@@ -166,6 +112,9 @@ console.log(val.status)
       </Formik>
 
 </div>
+      </div>{" "}
+    </div>:null}
+
 
 
 
@@ -224,6 +173,14 @@ console.log(val.status)
         </table>
       </div>
         </div>
+        
+        <div className="w-32 h-12 mt-6 ">
+        <button type="button" onClick={()=>{
+          setShowPopup(true)
+        }} className="w-full h-full bg-green-500 rounded-xl text-sm text-white hover:bg-green-400">
+            Add Match
+        </button>
+  </div>
     </DashboardLayout>
   );
 }
