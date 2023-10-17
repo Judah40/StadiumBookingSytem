@@ -13,6 +13,7 @@ import Link from "next/link";
 import { supabase } from "../Auth/supabase";
 import { useRouter } from "next/navigation";
 import { get } from "http";
+
 function User() {
 
 
@@ -82,6 +83,7 @@ setMatch(values.data)
       {/* body */}
       <div className="w-full  grid grid-rows-2  md:grid-cols-2 gap-y-8">
         <div className=" space-y-4 flex flex-col items-center justify-center md:border-b ">
+          
           <h1 className="text-[50px] font-semibold  text-center md:text-left">
             BOOK NOW
           </h1>
@@ -91,7 +93,9 @@ setMatch(values.data)
             interfeace ensure <br /> a hassle-free booking experience{" "}
           </p>
           <button className=" w-[240px] border shadow-2xl h-[68px] rounded-full bg-blue-500 hover:bg-blue-400 grid grid-cols-1 items-center">
-            <h1 className="text-xl font-semibold text-gray-300">Book Ticket</h1>
+            <h1 className="text-xl font-semibold text-gray-300">
+              <Link href="User/Matches">Book Ticket</Link>
+            </h1>
           </button>
         </div>
 
@@ -116,29 +120,24 @@ setMatch(values.data)
                   <div className="grid grid-cols-3 place-items-center">
 
                     <div>
-                      <img src="/countries/portugal.png" className="w-24 md:w-40" />
+                      <img src="/countries/portugal.png" className="w-24 md:w-40" alt="img" />
                     </div>
                     <p className="">vs</p>
                     <div className="flex-1  justify-end flex">
-                      <img src="/countries/spain.png" className="w-24 md:w-40" />
+                      <img src="/countries/spain.png" className="w-24 md:w-40" alt="img" />
                     </div>
                 </div>
 
             </div>
               );
             }))}
-            <button type="button" className="bg-red-500" onClick={()=>{supabase.auth.signOut()
-            router.push('/')
-            }}>
-  signout
-  </button>      
           </div>
         </div>
 
 
 
         <div className="grid grid-cols-1 md:grid-cols-2 md:col-span-2 place-items-center   w-full gap-y-[450px]">
-        {data.slice(data.length-4, data.length).map((values:any, index)=>{
+        {data.slice(data.length-4, data.length).map((values:any, index:any)=>{
           return(
             <div key={index} className=" grid grid-cols-1 place-items-center">
              

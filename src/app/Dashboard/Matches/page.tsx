@@ -274,12 +274,12 @@ const [error, setError] = useState<string | null>(null);
             >
               <div className="text-xl font-bold mb-2 flex space-x-4 text-white  items-center justify-center">
                 <div>
-                  <img src="/countries/portugal.png" />
+                  <img src="/countries/portugal.png" className="w-20 h-20"/>
                   {match.team1}
                 </div>
                 <div>vs</div>
                 <div>
-                  <img src="/countries/spain.png" />
+                  <img src="/countries/spain.png" className="w-20 h-20" />
 
                   {match.team2}
                 </div>

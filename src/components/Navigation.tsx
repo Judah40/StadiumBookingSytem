@@ -1,6 +1,7 @@
 "use client";
 
 import { supabase } from "@/app/Auth/supabase";
+import { Button } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -12,6 +13,9 @@ function Navigation() {
     const data = await supabase.auth.getSession();
     return data;
   };
+
+
+
   // states
   const [Navbar, setNavbar] = useState(false);
 
@@ -87,6 +91,13 @@ function Navigation() {
               }}
               src={supabase.auth.getSession.||''} className="rounded-full w-12 h-12 border"/> */}
               </li>
+              <li>
+                <Button
+                  onClick={() => {
+                    supabase.auth.signOut()
+                }}
+                  variant="outlined" color="primary" size="small">SignOut </Button>
+                </li>
             </ul>
           </div>
         </div>
