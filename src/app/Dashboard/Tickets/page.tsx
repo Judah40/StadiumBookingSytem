@@ -22,6 +22,7 @@ const SignupSchema = Yup.object().shape({
     .required('Required'),
   date: Yup.date()
     .required('Required'),
+  price:Yup.string().required('required')
 });
 function Tickets() {
 
@@ -71,7 +72,8 @@ getData().then((val:any)=>{
           team1: '',
           team2: '',
           numberOfTicket: '',
-          date: '',
+                  date: '',
+          price:''
         }}
         validationSchema={SignupSchema}
         onSubmit={(values) => {
@@ -81,8 +83,9 @@ getData().then((val:any)=>{
           team1:values.team1,
           team2:values.team2,
           date:values.date,
-          left:values.numberOfTicket
-         }]).then((val)=>{
+          left:values.numberOfTicket,
+        Price:values.price
+         }]).then((val:any)=>{
 console.log(val.status)
 if(val.status ===201){
   alert('Successfully created a new Ticket')
@@ -100,7 +103,10 @@ if(val.status ===201){
             <ErrorMessage name="team2" component="div" className="text-red-500" />
 
             <Field type="number" name="numberOfTicket" placeholder="Number of Tickets" className="border p-2" />
-            <ErrorMessage name="numberOfTicket" component="div" className="text-red-500" />
+                    <ErrorMessage name="numberOfTicket" component="div" className="text-red-500" />
+                    
+            <Field type="number" name="price" placeholder="Tickets Prices" className="border p-2" />
+            <ErrorMessage name="price" component="div" className="text-red-500" />
 
             <Field type="date" name="date" className="border p-2" />
             <ErrorMessage name="date" component="div" className="text-red-500" />
@@ -143,6 +149,9 @@ if(val.status ===201){
               <th className="px-4 py-2 border-b bg-blue-500 text-left text-sm font-semibold text-white uppercase tracking-wider">
                 Date
               </th>
+              <th className="px-4 py-2 border-b bg-blue-500 text-left text-sm font-semibold text-white uppercase tracking-wider">
+                Price
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -151,11 +160,11 @@ if(val.status ===201){
                 <td className="px-4 py-3 border-b text-sm">{item.id}</td>
                 <td className="px-4 py-3 border-b text-sm flex space-x-4 items-center">
                   <div className="grid grid-cols-1 place-items-center">
-                    <img src="/countries/spain.png"/>
+                    <img src="/countries/spain.png" className="w-20 h-20"/>
                     {item.team1}</div>
                   <div>vs</div>
                   <div className="grid grid-cols-1 place-items-center">
-                  <img src="/countries/portugal.png"/>
+                  <img src="/countries/portugal.png" className="w-20 h-20"/>
                     {item.team2}</div>
                 </td>
                 <td className="px-4 py-3 border-b text-sm">
@@ -168,6 +177,7 @@ if(val.status ===201){
                   {item.left}
                 </td>
                 <td className="px-4 py-3 border-b text-sm">{item.date}</td>
+                <td className="px-4 py-3 border-b text-sm">Le {item.Price}</td>
               </tr>
             )))}
           </tbody>

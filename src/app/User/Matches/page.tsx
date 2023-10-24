@@ -43,13 +43,13 @@ function Matches() {
                     {/* teams */}
                     <div className="flex justify-center  gap-4 p-2 items-center">
                       <div className="text-center space-y-2">
-                        <img src="/countries/portugal.png" className="w-40" />
+                        <img src="/countries/portugal.png" className="w-32" alt="img" />
                         <h1>{values.team1}</h1>
                       </div>
                       <div className="text-lg">vs</div>
                       <div className="text-center space-y-2">
                         {" "}
-                        <img src="/countries/spain.png" className="w-40" />
+                        <img src="/countries/spain.png" className="w-32" alt="img" />
                         <h1>{values.team2}</h1>
                       </div>
                     </div>

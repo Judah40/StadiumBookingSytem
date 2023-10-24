@@ -116,13 +116,13 @@ function DashboardPage() {
           <h1>Last Match</h1>
           <div className="flex items-center justify-center space-x-2">
             {/* team 1 */}
-            <img src="/countries/spain.png" alt="" />
+            <img src="/countries/spain.png" alt="" className="w-20 h-20"/>
             {/* scores */}
             <div className="flex rounded-xl bg-white h-8 w-12 items-center justify-center">
               2 - 0
             </div>
             {/* team 2 */}
-            <img src="/countries/portugal.png" alt="" />
+            <img src="/countries/portugal.png" alt="" className="w-20 h-20"/>
           </div>
 
           {/* stats */}

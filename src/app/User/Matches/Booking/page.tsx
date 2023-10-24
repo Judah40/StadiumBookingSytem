@@ -61,7 +61,7 @@ function Booking({
   const handleGenerateQRCode = async () => {
     // This URL is supposed to be your backend endpoint that validates the QR code
  
-    setQrValue(`${email} `);
+    setQrValue(`${email}, ${searchParams.team1}, ${searchParams.team2}, ${searchParams.date}, ${searchParams.time}  `);
 
     // Here, you'd typically also make a call to your backend to register
     // the unique QR code value in your database along with its validity status.
