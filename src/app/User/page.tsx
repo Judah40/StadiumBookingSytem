@@ -12,7 +12,9 @@ import axios from "axios";
 import Link from "next/link";
 import { supabase } from "../Auth/supabase";
 import { useRouter } from "next/navigation";
-import { get } from "http";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
+
 function User() {
 
 
@@ -79,6 +81,21 @@ setMatch(values.data)
         <Navigation />
       </div>
 
+      {/* Carousel */}
+      <div className="w-full h-full items-center">
+      <Carousel >
+    <div className="w-full h-screen">
+      <img src="/Carousel/SL1.webp" alt="carousel1" />
+    </div>
+    <div className="w-full h-screen">
+    <img src="/Carousel/SL2.jpeg" alt="carousel2" />
+    </div>
+    <div className="w-full h-screen">
+    <img src="/Carousel/SL3.jpeg" alt="carousel3" />
+    </div>
+      </Carousel>
+      </div>
+
       {/* body */}
       <div className="w-full  grid grid-rows-2  md:grid-cols-2 gap-y-8">
         <div className=" space-y-4 flex flex-col items-center justify-center md:border-b ">
@@ -103,7 +120,8 @@ setMatch(values.data)
             24th June 2024
           </div>
           <div className="w-full items-center flex flex-col gap-2 p-8 md:p-0">
-            {match &&(match.map((value:any, index:any) => {
+            {match &&(match
+                .slice(match.length - 2, match.length).map((value:any, index:any) => {
               return (
                 <div key={index} className="w-[300px] gap-2 grid">
                   {/* time */}
