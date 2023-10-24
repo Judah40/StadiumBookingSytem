@@ -84,13 +84,13 @@ setMatch(values.data)
       {/* Carousel */}
       <div className="w-full h-full items-center">
       <Carousel >
-    <div className="w-full h-screen">
+    <div className="w-full h-full">
       <img src="/Carousel/SL1.webp" alt="carousel1" />
     </div>
-    <div className="w-full h-screen">
+    <div className="w-full h-full">
     <img src="/Carousel/SL2.jpeg" alt="carousel2" />
     </div>
-    <div className="w-full h-screen">
+    <div className="w-full h-full">
     <img src="/Carousel/SL3.jpeg" alt="carousel3" />
     </div>
       </Carousel>

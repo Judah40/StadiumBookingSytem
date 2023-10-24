@@ -6,7 +6,13 @@ import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Supa, supabase } from "@/app/Auth/supabase";
+import { useRouter } from "next/router";
 function Users() {
+
+//router
+
+
+
   // Sample data
   const [users, setUsers]=useState<any[]>([])
  
@@ -60,12 +66,16 @@ console.log(val.data.users)
                     {item.phoneNumber}
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm space-x-4">
-                  <button className="w-24 h-8 bg-red-500 text-white rounded">
+                  <button
+                  
+                  onClick={()=>{
+
+                    Supa.auth.admin.deleteUser(item.id)
+                    window.location.reload()                  }}
+                  className="w-24 h-8 bg-red-500 text-white rounded">
                     Delete User
                   </button>
-                  <button className="w-24 h-8 bg-green-500 text-white rounded">
-                    Suspend User
-                  </button>
+                 
                   </td>
                 </tr>
               )))}

@@ -21,6 +21,15 @@ function Booking({
     time: string;
   };
 }) {
+
+
+  const getData=async()=>{
+
+    const data =await supabase
+    .from('Ticket')
+    .select('left, sold')
+    return data
+    }
   console.log(searchParams.team1);
 
   const getUsername = async () => {
@@ -115,6 +124,10 @@ function Booking({
       setEmail(value.data.session?.user.id);
     });
     addPayment();
+
+    getData().then((data) => {
+      console.log(data)
+    })
   }, []);
   return (
     <div className="w-full ">
@@ -344,7 +357,9 @@ function Booking({
         <h1>
           Please Scan qrcode
           </h1>  
-        <button onClick={()=>{downloadQR()}} type="button" className="w-full h-12 bg-green-500 rounded-full text-white">
+        <button onClick={()=>{
+          supabase.from('Ticket').update({left:"", sold:""})
+        }} type="button" className="w-full h-12 bg-green-500 rounded-full text-white">
 download qrcode
         </button>
         </div>

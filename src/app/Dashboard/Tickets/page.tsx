@@ -80,7 +80,8 @@ getData().then((val:any)=>{
           ticket_number:values.numberOfTicket,
           team1:values.team1,
           team2:values.team2,
-          date:values.date
+          date:values.date,
+          left:values.numberOfTicket
          }]).then((val)=>{
 console.log(val.status)
 if(val.status ===201){
@@ -164,7 +165,7 @@ if(val.status ===201){
                   {item.ticketsSold}
                 </td>
                 <td className="px-4 py-3 border-b text-sm">
-                  {item.ticketsLeft}
+                  {item.left}
                 </td>
                 <td className="px-4 py-3 border-b text-sm">{item.date}</td>
               </tr>
