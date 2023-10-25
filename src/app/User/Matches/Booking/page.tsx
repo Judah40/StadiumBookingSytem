@@ -19,6 +19,7 @@ function Booking({
     team2: string;
     date: string;
     time: string;
+    id:number
   };
 }) {
 
@@ -28,9 +29,10 @@ function Booking({
     const data =await supabase
     .from('Ticket')
     .select('left, sold')
+    .eq('id',searchParams.id)
     return data
     }
-  console.log(searchParams.team1);
+  console.log(searchParams.id);
 
   const getUsername = async () => {
     const data = await supabase.auth.getSession();

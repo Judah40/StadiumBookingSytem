@@ -2,12 +2,21 @@
 
 import DashboardLayout from "@/components/DashboardLayout";
 import React, { useEffect, useState } from "react";
-import { useFormik } from "formik";
+import { Formik, Form, Field, ErrorMessage, useFormik } from 'formik';
 import * as Yup from "yup";
-import { supabase } from "@/app/Auth/supabase";
+import { Supa, supabase } from "@/app/Auth/supabase";
 import {ImCancelCircle} from "react-icons/im"
 
-
+const validationSchema = Yup.object().shape({
+  time: Yup.string().required('Time is required'),
+  date: Yup.date().required('Date is required').nullable(),
+  team1: Yup.string().required('Team 1 is required'),
+  team1Flag: Yup.mixed().required('Team 1 flag is required'),
+  team2: Yup.string().required('Team 2 is required'),
+  team2Flag: Yup.mixed().required('Team 2 flag is required'),
+  ticketNumber: Yup.string().required('Ticket number is required'),
+  gameName: Yup.string().required('Game name is required'),
+});
 
 type values ={
   id: number,
@@ -98,7 +107,7 @@ const [error, setError] = useState<string | null>(null);
       date: Yup.date().required("Required").nullable(),
       time: Yup.string().required("Required"),
     }),
-    onSubmit: (values) => {
+    onSubmit: (values:any) => {
       supabase
         .from("Matches")
         .insert([
@@ -152,105 +161,102 @@ const [error, setError] = useState<string | null>(null);
 
 
         <div className="border p-4 bg-blue-200">
-        <form
-          onSubmit={formik.handleSubmit}
-          className="w-full max-w-lg mx-auto "
-        >
-          <div className="mb-4">
-            <label
-              htmlFor="team1"
-              className="block text-gray-700 text-sm font-bold mb-2"
-            >
-              Team 1:
-            </label>
-            <input
-              type="text"
-              id="team1"
-              name="team1"
-              onChange={formik.handleChange}
-              value={formik.values.team1}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-            {formik.errors.team1 && formik.touched.team1 && (
-              <div className="text-red-500 text-xs mt-2">
-                {formik.errors.team1}
-              </div>
-            )}
-          </div>
+        <Formik
+        initialValues={{
+          time: '',
+          date: null,
+          team1: '',
+          team1Flag: '',
+          team2: '',
+          team2Flag: '',
+          ticketNumber: '',
+          gameName: ''
+        }}
+        validationSchema={validationSchema}
+        onSubmit={(values, { setSubmitting }) => {
 
-          <div className="mb-4">
-            <label
-              htmlFor="team2"
-              className="block text-gray-700 text-sm font-bold mb-2"
-            >
-              Team 2:
-            </label>
-            <input
-              type="text"
-              id="team2"
-              name="team2"
-              onChange={formik.handleChange}
-              value={formik.values.team2}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-            {formik.errors.team2 && formik.touched.team2 && (
-              <div className="text-red-500 text-xs mt-2">
-                {formik.errors.team2}
-              </div>
-            )}
-          </div>
 
-          <div className="mb-4">
-            <label
-              htmlFor="date"
-              className="block text-gray-700 text-sm font-bold mb-2"
-            >
-              Date:
-            </label>
-            <input
-              type="date"
-              id="date"
-              name="date"
-              onChange={formik.handleChange}
-              value={formik.values.date}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-            {formik.errors.date && formik.touched.date && (
-              <div className="text-red-500 text-xs mt-2">
-                {formik.errors.date}
-              </div>
-            )}
-          </div>
+        const data= ()=>{
 
-          <div className="mb-4">
-            <label
-              htmlFor="time"
-              className="block text-gray-700 text-sm font-bold mb-2"
-            >
-              Time:
-            </label>
-            <input
-              type="time"
-              id="time"
-              name="time"
-              onChange={formik.handleChange}
-              value={formik.values.time}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-            {formik.errors.time && formik.touched.time && (
-              <div className="text-red-500 text-xs mt-2">
-                {formik.errors.time}
-              </div>
-            )}
-          </div>
+        return  supabase
+           .from('Matches')
+           .insert([
+             { date: values.date, time:values.time, team1:values.team1,team2:values.team2, ticket_number:values.ticketNumber,left:values.ticketNumber, game_name:`${values.team1}vs${values.team2}`, price:values.gameName},
+           ])
+        }  
 
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Submit
-          </button>
-        </form>
+        data().then((data)=>{
+          if(data.status===201){
+            alert("Successfully created a match and ticket")
+            setShowPopUp(false)
+          }
+console.log(data.status);
+        })
+          data
+                  console.log(values);
+          setSubmitting(false);
+        }}
+      >
+        {({ isSubmitting, setFieldValue }) => (
+          <Form className="space-y-4">
+            <div>
+              <label htmlFor="time" className="block text-sm font-medium text-gray-700">Time:</label>
+              <Field type="time" name="time" className="mt-1 p-2 w-full border rounded-md"/>
+              <ErrorMessage name="time" component="div" className="text-red-500 text-sm" />
+            </div>
+
+            <div>
+              <label htmlFor="date" className="block text-sm font-medium text-gray-700">Date:</label>
+              <Field type="date" name="date" className="mt-1 p-2 w-full border rounded-md"/>
+              <ErrorMessage name="date" component="div" className="text-red-500 text-sm" />
+            </div>
+
+            <div>
+              <label htmlFor="team1" className="block text-sm font-medium text-gray-700">Team 1:</label>
+              <Field type="text" name="team1" className="mt-1 p-2 w-full border rounded-md"/>
+              <ErrorMessage name="team1" component="div" className="text-red-500 text-sm" />
+            </div>
+
+            <div>
+              <label htmlFor="team1Flag" className="block text-sm font-medium text-gray-700">Team 1 Flag:</label>
+              <input type="file" name="team1Flag" onChange={(event:any) => {
+                setFieldValue("team1Flag", event.currentTarget.files[0]);
+              }} className="mt-1 p-2 w-full border rounded-md"/>
+              <ErrorMessage name="team1Flag" component="div" className="text-red-500 text-sm" />
+            </div>
+
+            <div>
+              <label htmlFor="team2" className="block text-sm font-medium text-gray-700">Team 2:</label>
+              <Field type="text" name="team2" className="mt-1 p-2 w-full border rounded-md"/>
+              <ErrorMessage name="team2" component="div" className="text-red-500 text-sm" />
+            </div>
+
+            <div>
+              <label htmlFor="team2Flag" className="block text-sm font-medium text-gray-700">Team 2 Flag:</label>
+              <input type="file" name="team2Flag" onChange={(event:any) => {
+                setFieldValue("team2Flag", event.currentTarget.files[0]);
+              }} className="mt-1 p-2 w-full border rounded-md"/>
+              <ErrorMessage name="team2Flag" component="div" className="text-red-500 text-sm" />
+            </div>
+
+            <div>
+              <label htmlFor="ticketNumber" className="block text-sm font-medium text-gray-700">Ticket Number:</label>
+              <Field type="text" name="ticketNumber" className="mt-1 p-2 w-full border rounded-md"/>
+              <ErrorMessage name="ticketNumber" component="div" className="text-red-500 text-sm" />
+            </div>
+
+            <div>
+              <label htmlFor="gameName" className="block text-sm font-medium text-gray-700">Ticekt Price:</label>
+              <Field type="text" name="gameName" className="mt-1 p-2 w-full border rounded-md"/>
+              <ErrorMessage name="gameName" component="div" className="text-red-500 text-sm" />
+            </div>
+
+            <button type="submit" disabled={isSubmitting} className="mt-4 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">
+              Submit
+            </button>
+          </Form>
+        )}
+      </Formik>
       </div>
       </div>{" "}
     </div>:null}

@@ -57,7 +57,7 @@ function Matches() {
                       <Link
                         href={{
                           pathname: "/User/Matches/Booking",
-                          query: {team1:values.team1, team2:values.team2, date:values.date, time:values.time},
+                          query: {team1:values.team1, team2:values.team2, date:values.date, time:values.time, id:values.id, name:values.name},
                         }}
                       >
                         <button className="w-40 h-12 rounded-xl bg-[#9B00A5] text-white">
@@ -84,7 +84,7 @@ function Matches() {
                 
               </thead>
               {match &&
-                match.map((values: any, index:number) => (
+                match.slice(0, 10).map((values: any, index:number) => (
                   <tbody key={index}>
                     {/* Example row */}
                     <tr className="border-t">

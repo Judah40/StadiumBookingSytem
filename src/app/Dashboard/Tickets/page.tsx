@@ -31,15 +31,21 @@ const getData=async()=>{
 const data =await supabase
 .from('Ticket')
 .select('*')
+
+
 return data
 }
+const data = async () => {
+  let data = await supabase.from("Matches").select("*");
 
+  return data;
+};
 
 const [tickets, setTickets]=useState<any[]>([])
 const [showPopup, setShowPopup] = useState(false);
 
   useEffect(()=>{
-getData().then((val:any)=>{
+data().then((val:any)=>{
   setTickets(val.data)
 })
   },[])
@@ -171,13 +177,13 @@ if(val.status ===201){
                   {item.ticket_number}
                 </td>
                 <td className="px-4 py-3 border-b text-sm">
-                  {item.ticketsSold}
+                  {item.sold}
                 </td>
                 <td className="px-4 py-3 border-b text-sm">
                   {item.left}
                 </td>
                 <td className="px-4 py-3 border-b text-sm">{item.date}</td>
-                <td className="px-4 py-3 border-b text-sm">Le {item.Price}</td>
+                <td className="px-4 py-3 border-b text-sm">Le {item.price}</td>
               </tr>
             )))}
           </tbody>
@@ -186,11 +192,7 @@ if(val.status ===201){
         </div>
         
         <div className="w-32 h-12 mt-6 ">
-        <button type="button" onClick={()=>{
-          setShowPopup(true)
-        }} className="w-full h-full bg-green-500 rounded-xl text-sm text-white hover:bg-green-400">
-            Add Match
-        </button>
+       
   </div>
     </DashboardLayout>
   );

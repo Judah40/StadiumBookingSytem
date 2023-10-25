@@ -84,7 +84,13 @@ setMatch(values.data)
 
       {/* Carousel */}
       <div className="w-full h-full items-center">
-      <Carousel >
+      <Carousel 
+      infiniteLoop
+      showStatus={false}
+      showArrows={true}
+      swipeable	
+      transitionTime={1000}
+      >
     <div className="w-full h-full">
       <img src="/Carousel/SL1.webp" alt="carousel1" />
     </div>

@@ -4,17 +4,54 @@
 
 import DashboardLayout from "@/components/DashboardLayout";
 import { Graph } from "@/components/LineChart";
-
+import { supabase } from "../Auth/supabase";
+import { useEffect, useState } from "react";
+import { Dots } from "react-activity";
+import "react-activity/dist/library.css";
 function DashboardPage() {
+  //data
+  const getAllData = async () => {
+    return supabase
+      .from("Matches")
+      .select("ticket_number,sold, left, game_name, price");
+  };
+  const getSpecificData = async (val:any) => {
 
+    return supabase
+      .from("Matches")
+      .select("ticket_number,sold, left, game_name, price")
+      .eq('game_name',val)
+  }
 
-
-  
   const matchesData = [
-    { date: '2023-01-01', team1: 'Spain', team2: 'France', score: '2-1' },
-    { date: '2023-01-02', team1: 'PSG', team2: 'Monaco', score: '1-1' },
-    { date: '2023-01-03', team1: 'Leeds', team2: 'Manchester United', score: '0-3' },
+    { date: "2023-01-01", team1: "Spain", team2: "France", score: "2-1" },
+    { date: "2023-01-02", team1: "PSG", team2: "Monaco", score: "1-1" },
+    {
+      date: "2023-01-03",
+      team1: "Leeds",
+      team2: "Manchester United",
+      score: "0-3",
+    },
   ];
+
+  //state
+  const [ticketNumber, setTicketNumber] = useState<any>(null);
+  const [price, setPrice] = useState<any>(null);
+  const [soldTicket, setSoldTicket] = useState<any>(null);
+  const [leftTicket, setLeftTicket] = useState<any>();
+  const [gameName, setGameName] = useState<any>(null);
+  const [value, setValue] = useState<any>(null)
+  useEffect(() => {
+    getAllData().then((val) => {
+      
+      setGameName(val.data);
+    });
+
+    console.log(gameName);
+    if(gameName){
+
+    }
+  }, []);
   return (
     <DashboardLayout>
       <div className="w-10/12 pt-12 ">
@@ -22,6 +59,31 @@ function DashboardPage() {
       </div>
       {/* Add your dashboard content here */}
 
+      <label >Select Team</label>
+    <select id="dropdown" name="options" className="w-40 border"
+    onChange={(val)=>{
+
+      getSpecificData(val.target.value).then((val) => {
+        try {
+          setValue(val.data)
+         
+        } catch (error) {
+          console.log(error)
+        }
+        })
+      val.preventDefault();
+      console.log(val.target.value)
+    }}
+    >
+                <option  value=""></option>
+
+      {gameName && (gameName.map((values:any, index:any)=>{
+        return(
+          <option key={index} value={values.game_name}>{values.game_name}</option>
+        )
+      }))} 
+       
+    </select>
       {/* header */}
       <div className="flex md:space-x-40 flex-col md:flex-row pt-4 ">
         {/* card1 */}
@@ -32,14 +94,23 @@ function DashboardPage() {
             </h1>
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-white">{"12"}</h1>
+            <h1 className="text-2xl font-semibold text-white">
+            {value === null
+                ? "Le 0"
+                :(value.map((val:any, index:any)=>{
+                  return <p key={index}>{val.ticket_number}</p>
+                }))}            </h1>
           </div>
           <div>
             <h1 className=" font-light text-gray-700">Total Price Expected</h1>
           </div>
           <div>
             <h1 className="text-2xl font-semibold text-white">
-              {"Le12,000"}
+              {value === null
+                ? "Le 0"
+                :(value.map((val:any, index:any)=>{
+                  return <p key={index}>{ `${Number(val.ticket_number) * Number(val.price) }`}</p>
+                }))}
             </h1>
           </div>
         </div>
@@ -53,13 +124,23 @@ function DashboardPage() {
             </h1>
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-white">{"4"}</h1>
+            <h1 className="text-2xl font-semibold text-white"> {value === null
+                ? "Le 0"
+                :(value.map((val:any, index:any)=>{
+                  return <p key={index}>{val.left}</p>
+                }))}  </h1>
           </div>
           <div>
             <h1 className=" font-light text-gray-700">Total Price Expected</h1>
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-white">{"Le2,000"}</h1>
+            <h1 className="text-2xl font-semibold text-white">
+            {value === null
+                ? "Le 0"
+                :(value.map((val:any, index:any)=>{
+                  return <p key={index}>{ `${Number(val.left) * Number(val.price) }`}</p>
+                }))}
+            </h1>
           </div>
         </div>
         {/* card3 */}
@@ -71,14 +152,22 @@ function DashboardPage() {
             </h1>
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-white">{"8"}</h1>
+            <h1 className="text-2xl font-semibold text-white">{value === null
+                ? "Le 0"
+                :(value.map((val:any, index:any)=>{
+                  return <p key={index}>{val.sold}</p>
+                }))}</h1>
           </div>
           <div>
             <h1 className=" font-light text-gray-700">Total Price</h1>
           </div>
           <div>
             <h1 className="text-2xl font-semibold text-white">
-              {"Le10,000"}
+            {value === null
+                ? "Le 0"
+                :(value.map((val:any, index:any)=>{
+                  return <p key={index}>{ `${Number(val.sold) * Number(val.price) }`}</p>
+                }))}
             </h1>
           </div>
         </div>
@@ -108,21 +197,20 @@ function DashboardPage() {
           </div>
         </div>
 
-
         {/* last match */}
 
-{/* past match */}
+        {/* past match */}
         <div className="bg-blue-500 border border-gray-400 p-12 flex flex-col items-center justify-center rounded-xl space-y-4">
           <h1>Last Match</h1>
           <div className="flex items-center justify-center space-x-2">
             {/* team 1 */}
-            <img src="/countries/spain.png" alt="" className="w-20 h-20"/>
+            <img src="/countries/spain.png" alt="" className="w-20 h-20" />
             {/* scores */}
             <div className="flex rounded-xl bg-white h-8 w-12 items-center justify-center">
               2 - 0
             </div>
             {/* team 2 */}
-            <img src="/countries/portugal.png" alt="" className="w-20 h-20"/>
+            <img src="/countries/portugal.png" alt="" className="w-20 h-20" />
           </div>
 
           {/* stats */}
@@ -165,49 +253,59 @@ function DashboardPage() {
         </div>
       </div>
 
-
-
-
-
       {/* past match */}
 
-
-<div className="w-full h-80 ">
-
-      <div className=" mx-auto p-6 w-full ">
-      <h2 className="text-2xl font-semibold mb-5">Past Matches</h2>
-      <div className="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
-        <table className="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
-          <thead>
-            <tr className="text-left">
-              <th className="py-2 px-3 sticky top-0 border-b border-gray-200 bg-blue-500 text-white">Date</th>
-              <th className="py-2 px-3 sticky top-0 border-b border-gray-200 bg-blue-500 text-white">Team 1</th>
-              <th className="py-2 px-3 sticky top-0 border-b border-gray-200 bg-blue-500 text-white">Team 2</th>
-              <th className="py-2 px-3 sticky top-0 border-b border-gray-200 bg-blue-500 text-white">Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            {matchesData.map((match, index) => (
-              <tr key={index}>
-                <td className="border-dashed border-t border-gray-200">
-                  <span className="text-gray-700 px-3 py-2 flex items-center">{match.date}</span>
-                </td>
-                <td className="border-dashed border-t border-gray-200">
-                  <span className="text-gray-700 px-3 py-2 flex items-center">{match.team1}</span>
-                </td>
-                <td className="border-dashed border-t border-gray-200">
-                  <span className="text-gray-700 px-3 py-2 flex items-center">{match.team2}</span>
-                </td>
-                <td className="border-dashed border-t border-gray-200">
-                  <span className="text-gray-700 px-3 py-2 flex items-center">{match.score}</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="w-full h-80 ">
+        <div className=" mx-auto p-6 w-full ">
+          <h2 className="text-2xl font-semibold mb-5">Past Matches</h2>
+          <div className="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
+            <table className="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
+              <thead>
+                <tr className="text-left">
+                  <th className="py-2 px-3 sticky top-0 border-b border-gray-200 bg-blue-500 text-white">
+                    Date
+                  </th>
+                  <th className="py-2 px-3 sticky top-0 border-b border-gray-200 bg-blue-500 text-white">
+                    Team 1
+                  </th>
+                  <th className="py-2 px-3 sticky top-0 border-b border-gray-200 bg-blue-500 text-white">
+                    Team 2
+                  </th>
+                  <th className="py-2 px-3 sticky top-0 border-b border-gray-200 bg-blue-500 text-white">
+                    Score
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {matchesData.map((match, index) => (
+                  <tr key={index}>
+                    <td className="border-dashed border-t border-gray-200">
+                      <span className="text-gray-700 px-3 py-2 flex items-center">
+                        {match.date}
+                      </span>
+                    </td>
+                    <td className="border-dashed border-t border-gray-200">
+                      <span className="text-gray-700 px-3 py-2 flex items-center">
+                        {match.team1}
+                      </span>
+                    </td>
+                    <td className="border-dashed border-t border-gray-200">
+                      <span className="text-gray-700 px-3 py-2 flex items-center">
+                        {match.team2}
+                      </span>
+                    </td>
+                    <td className="border-dashed border-t border-gray-200">
+                      <span className="text-gray-700 px-3 py-2 flex items-center">
+                        {match.score}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
-</div>
     </DashboardLayout>
   );
 }
