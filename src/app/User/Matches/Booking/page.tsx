@@ -10,6 +10,7 @@ import QRCode from "qrcode.react";
 import dynamic from "next/dynamic";
 import { ImCancelCircle } from "react-icons/im";
 import { QrReader } from 'react-qr-reader';
+import Footer from "@/components/Footer";
 
 function Booking({
   searchParams,
@@ -19,7 +20,11 @@ function Booking({
     team2: string;
     date: string;
     time: string;
-    id:number
+    id:number;
+    img1:string;
+    img2:string;
+    price:number;
+    game:string
   };
 }) {
 
@@ -27,12 +32,12 @@ function Booking({
   const getData=async()=>{
 
     const data =await supabase
-    .from('Ticket')
+    .from('Matches')
     .select('left, sold')
     .eq('id',searchParams.id)
     return data
     }
-  console.log(searchParams.id);
+  console.log(searchParams);
 
   const getUsername = async () => {
     const data = await supabase.auth.getSession();
@@ -110,13 +115,13 @@ function Booking({
     setSelectedOption(e.target.value);
     const selected = e.target.value;
     if (selected === "VIP") {
-      const total = PricePerTicket + 100;
+      const total = Number(searchParams.price) + 100;
       const Price = total * ticketNumber;
       console.log(Price);
       setAmount(Price);
     } else {
-      console.log(PricePerTicket * ticketNumber);
-      setAmount(PricePerTicket * ticketNumber);
+      console.log(Number(searchParams.price) * ticketNumber);
+      setAmount(Number(searchParams.price) * ticketNumber);
     }
   };
   const PricePerTicket: number = 150;
@@ -128,7 +133,7 @@ function Booking({
     addPayment();
 
     getData().then((data) => {
-      console.log(data)
+      console.log(data.data)
     })
   }, []);
   return (
@@ -149,16 +154,16 @@ function Booking({
                 <div className="flex items-center justify-center gap-4">
                   <div className="flex flex-col items-center justify-center">
                     <img
-                      src="/countries/portugal.png"
-                      className="max-w-[340px]"
+                          src={`https://qlrmkunqfmyxzbyrvhfn.supabase.co/storage/v1/object/public/images/${searchParams.img1}`}
+                          className="w-32"
                     />
                     {searchParams.team1}
                   </div>
                   vs
                   <div className="flex flex-col items-center justify-center">
                     <img
-                      src="/countries/portugal.png"
-                      className="max-w-[340px]"
+                          src={`https://qlrmkunqfmyxzbyrvhfn.supabase.co/storage/v1/object/public/images/${searchParams.img2}`}
+                          className="w-32"
                     />
                     {searchParams.team2}
                   </div>
@@ -195,13 +200,13 @@ function Booking({
               <div className="w-9/12 flex">
                 <h1 className="font-semibold">Price for VIP Ticket:</h1>
                 <div className="flex-1  flex justify-end">
-                  Le{PricePerTicket}
+                  Le{Number(searchParams.price)}
                 </div>
               </div>
               <div className="w-9/12 flex">
                 <h1 className="font-semibold">Price for Normal Ticket:</h1>
                 <div className="flex-1  flex justify-end">
-                  Le{PricePerTicket + 100}
+                  Le{Number(searchParams.price)  + 100}
                 </div>
               </div>
 
@@ -233,13 +238,13 @@ function Booking({
                       const value: any = val.target.value;
 
                       if (selectedOption === "VIP") {
-                        const total = PricePerTicket + 100;
-                        const Price = total * value;
+                        const total = Number(searchParams.price) + 100;
+                        const Price = Number(searchParams.price) * value;
                         console.log(Price);
                         setAmount(Price);
                       } else {
-                        console.log(PricePerTicket * ticketNumber);
-                        setAmount(PricePerTicket * ticketNumber);
+                        console.log(Number(searchParams.price) * ticketNumber);
+                        setAmount(Number(searchParams.price) * ticketNumber);
                       }
                     }}
                   />
@@ -370,6 +375,10 @@ download qrcode
     </div>
         
       ) : null}
+
+
+<Footer/>
+
     </div>
   );
 }

@@ -2,7 +2,6 @@
 
 import SignButton from "@/components/SignButton";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
 import User from "./User/page";
 
 import Login from "./Auth/Login/page";
@@ -55,7 +54,7 @@ export default function Home() {
   }
 
   return (
-    <div className="md:flex md:flex-col md:place-items-center ">
+    <div style={{backgroundImage:'url("/1725.jpg")'}} className="md:flex md:flex-col md:place-items-center">
       <Login />
     </div>
   );

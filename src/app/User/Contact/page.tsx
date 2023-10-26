@@ -1,5 +1,6 @@
 'use client'
 
+import Footer from "@/components/Footer";
 import Navigation from "@/components/Navigation";
 import React, { useState } from "react";
 
@@ -107,6 +108,8 @@ function Contact() {
           </div>
         </div>
       </div>
+      <Footer/>
+
     </div>
   );
 }

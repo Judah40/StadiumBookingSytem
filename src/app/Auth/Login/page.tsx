@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import LoginForm from "@/components/LoginForm";
 import SignButton from "@/components/SignButton";
@@ -10,17 +10,19 @@ import React, { useEffect } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { supabase } from "../supabase";
 function Login() {
-    // const {data:session} = useSession()
+  // const {data:session} = useSession()
 
-    // useEffect(()=>{
-    // console.log(session)
-    // },[session])
+  // useEffect(()=>{
+  // console.log(session)
+  // },[session])
   return (
     <div className=" grid grid-cols-1 md:grid-cols-2 h-screen place-items-center p-4 md:w-[800px] lg:w-[1000px]">
-      <div className=" bg-gradient-to-r from-purple-500 to-pink-500 w-full md:shadow-md md:shadow-white md:h-[700px] md:grid md:grid-cols-1 hidden place-items-center">
-      <img src={"/animation_ln8ac0eh_small.gif"} alt="logo" 
-                      style={{ width: 140, height: 100 }} // Add this line
-      />
+      <div className=" bg-green-800 w-full md:shadow-md md:shadow-white md:h-[700px] md:grid md:grid-cols-1 hidden place-items-center">
+        <img
+          src={"/pitch.gif"}
+          alt="logo"
+          style={{ width: 440, height: 650 }} // Add this line
+        />
       </div>
 
       {/* Login Form */}
@@ -28,9 +30,10 @@ function Login() {
         {/* logo */}
 
         <div className="">
-          <img src={"/logo.png"} alt="logo" 
-                style={{ width: 140, height: 66 }} // Add this line
-
+          <img
+            src={"/logo.png"}
+            alt="logo"
+            style={{ width: 140, height: 66 }} // Add this line
           />
         </div>
 
@@ -46,17 +49,33 @@ function Login() {
           <div className="w-32 h-[0.2px] bg-gray-500"></div>
         </div>
         {/* google auth */}
-        <div >
-          <button type="button" onClick={()=>supabase.auth.signInWithOAuth({provider:"google"})} className="flex items-center space-x-4 border p-4 rounded-full shadow-lg" >
+        <div>
+          <button
+            type="button"
+            onClick={() =>
+              supabase.auth.signInWithOAuth({ provider: "google" })
+            }
+            className="flex items-center space-x-4 border p-4 rounded-full shadow-lg"
+          >
             <FcGoogle className="text-4xl" />
-            <h1 className="text-[#8C7E7E] font-semibold">Sign in with Google</h1>
+            <h1 className="text-[#8C7E7E] font-semibold">
+              Sign in with Google
+            </h1>
           </button>
         </div>
 
-
         {/* don't have an account */}
         <div>
-            <h1 className="text-sm text-[#8C7E7E]">Don't have an account? <Link href={"/Auth/Register"} style={{textDecoration:"underline"}}> Create Account</Link></h1>
+          <h1 className="text-sm text-[#8C7E7E]">
+            Don't have an account?{" "}
+            <Link
+              href={"/Auth/Register"}
+              style={{ textDecoration: "underline" }}
+            >
+              {" "}
+              Create Account
+            </Link>
+          </h1>
         </div>
       </div>
     </div>

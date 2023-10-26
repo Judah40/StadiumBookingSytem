@@ -1,6 +1,7 @@
 "use client";
 
 import { getMatches } from "@/app/api/data/data";
+import Footer from "@/components/Footer";
 import Navigation from "@/components/Navigation";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -43,13 +44,21 @@ function Matches() {
                     {/* teams */}
                     <div className="flex justify-center  gap-4 p-2 items-center">
                       <div className="text-center space-y-2">
-                        <img src="/countries/portugal.png" className="w-32" alt="img" />
+                        <img
+                          src={`https://qlrmkunqfmyxzbyrvhfn.supabase.co/storage/v1/object/public/images/${values.team1_image_url}`}
+                          className="w-32"
+                          alt="img"
+                        />
                         <h1>{values.team1}</h1>
                       </div>
                       <div className="text-lg">vs</div>
                       <div className="text-center space-y-2">
                         {" "}
-                        <img src="/countries/spain.png" className="w-32" alt="img" />
+                        <img
+                          src={`https://qlrmkunqfmyxzbyrvhfn.supabase.co/storage/v1/object/public/images/${values.team2_image_url}`}
+                          className="w-32"
+                          alt="img"
+                        />
                         <h1>{values.team2}</h1>
                       </div>
                     </div>
@@ -57,7 +66,18 @@ function Matches() {
                       <Link
                         href={{
                           pathname: "/User/Matches/Booking",
-                          query: {team1:values.team1, team2:values.team2, date:values.date, time:values.time, id:values.id, name:values.name},
+                          query: {
+                            team1: values.team1,
+                            team2: values.team2,
+                            date: values.date,
+                            time: values.time,
+                            id: values.id,
+                            name: values.game_name,
+                            img1:values.team1_image_url,
+                            img2:values.team2_image_url,
+                            price:values.price,
+                            game:values.game_name
+                          },
                         }}
                       >
                         <button className="w-40 h-12 rounded-xl bg-[#9B00A5] text-white">
@@ -81,22 +101,21 @@ function Matches() {
                     FIXTURES
                   </th>
                 </tr>
-                
               </thead>
               {match &&
-                match.slice(0, 10).map((values: any, index:number) => (
+                match.slice(0, 10).map((values: any, index: number) => (
                   <tbody key={index}>
                     {/* Example row */}
                     <tr className="border-t">
                       <td className="py-2 px-6 text-left">Monday 15:00</td>
                       <td className="py-2 px-6 text-center">
                         <img
-                          src="/countries/portugal.png"
+                          src={`https://qlrmkunqfmyxzbyrvhfn.supabase.co/storage/v1/object/public/images/${values.team1_image_url}`}
                           alt="Team A"
                           className="inline w-16 h-12 mr-2"
                         />
                         <img
-                          src="/countries/spain.png"
+                          src={`https://qlrmkunqfmyxzbyrvhfn.supabase.co/storage/v1/object/public/images/${values.team2_image_url}`}
                           alt="Team B"
                           className="inline w-16 h-12 ml-2"
                         />
@@ -106,19 +125,27 @@ function Matches() {
                       </td>
                       <td className="py-2 px-6 text-center">
                         <Link
-                        href={{
+                          href={{
                             pathname: "/User/Matches/Booking",
-                            query: values,
-                          }}
+                            query: {
+                              team1: values.team1,
+                              team2: values.team2,
+                              date: values.date,
+                              time: values.time,
+                              id: values.id,
+                              name: values.game_name,
+                              img1:values.team1_image_url,
+                              img2:values.team1_image_url,
+                              price:values.price,
+                              game:values.game_name
+                            },                          }}
                         >
-                        <button className="px-4 py-2 bg-[#9B00A5] text-white rounded">
-                          Book Now
-                        </button>
+                          <button className="px-4 py-2 bg-[#9B00A5] text-white rounded">
+                            Book Now
+                          </button>
                         </Link>
                       </td>
-                      <td className="py-2 px-6 text-right">
-                        {values.date}
-                      </td>
+                      <td className="py-2 px-6 text-right">{values.date}</td>
                     </tr>
                     {/* Add more rows as needed */}
                   </tbody>
@@ -127,6 +154,7 @@ function Matches() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

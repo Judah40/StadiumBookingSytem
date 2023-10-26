@@ -1,8 +1,7 @@
-'use client'
+"use client";
 
 import Navigation from "@/components/Navigation";
 import SignButton from "@/components/SignButton";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
@@ -13,62 +12,35 @@ import Link from "next/link";
 import { supabase } from "../Auth/supabase";
 import { useRouter } from "next/navigation";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import { Carousel } from 'react-responsive-carousel';
+import { Carousel } from "react-responsive-carousel";
 import { get } from "http";
+import Footer from "@/components/Footer";
 
 function User() {
-
-
-  //const 
-const router = useRouter()
+  //const
+  const router = useRouter();
   //states
-  const [data, setData] = useState([])
-  const [match, setMatch]= useState<any>()
-  // matches
-  const matches = [
-    {
-      country1: "",
-      country2: "",
-      time: "",
-      date: "",
-    },
-    {
-      country1: "",
-      country2: "",
-      time: "",
-      date: "",
-    },
-    {
-      country1: "",
-      country2: "",
-      time: "",
-      date: "",
-    },
-    {
-      country1: "",
-      country2: "",
-      time: "",
-      date: "",
-    },
-  
-  ];
+  const [data, setData] = useState([]);
+  const [match, setMatch] = useState<any>();
 
   useEffect(() => {
-    availableMatches(20).then((values)=>{
-  setData(values.data)
+    availableMatches(20).then((values) => {
+      setData(values.data);
     });
-    
-    getMatches().then((values)=>{
-console.log(values.data)
 
-setMatch(values.data)
-    })
-  }, [])
+    getMatches().then((values) => {
+      console.log(values.data);
 
+      setMatch(values.data);
+    });
+  }, []);
 
-  if(!data){
-   return <div className="flex h-screen place-items-center justify-center bg-black text-white"><Dots color="#727981" size={32} speed={1} animating={true} />
-   </div>
+  if (!data) {
+    return (
+      <div className="flex h-screen place-items-center justify-center bg-black text-white">
+        <Dots color="#727981" size={32} speed={1} animating={true} />
+      </div>
+    );
   }
   return (
     <div className=" ">
@@ -84,32 +56,37 @@ setMatch(values.data)
 
       {/* Carousel */}
       <div className="w-full h-full items-center">
-      <Carousel 
-      infiniteLoop
-      showStatus={false}
-      showArrows={true}
-      swipeable	
-      transitionTime={1000}
-      >
-    <div className="w-full h-full">
-      <img src="/Carousel/SL1.webp" alt="carousel1" />
-    </div>
-    <div className="w-full h-full">
-    <img src="/Carousel/SL2.jpeg" alt="carousel2" />
-    </div>
-    <div className="w-full h-full">
-    <img src="/Carousel/SL3.jpeg" alt="carousel3" />
-    </div>
-      </Carousel>
+        <Carousel
+          autoPlay
+          infiniteLoop
+          showStatus={false}
+          interval={3000}
+          showArrows={true}
+          showThumbs={false}
+          showIndicators={false}
+          swipeable
+          transitionTime={1000}
+        >
+          <div className="w-full h-full">
+            <img src="/Carousel/SL1.webp" alt="carousel1" />
+          </div>
+          <div className="w-full h-full">
+            <img src="/Carousel/SL2.jpeg" alt="carousel2" />
+          </div>
+          <div className="w-full h-full">
+            <img src="/Carousel/SL3.jpeg" alt="carousel3" />
+          </div>
+        </Carousel>
       </div>
 
       {/* body */}
-      <div className="w-full  grid grid-rows-2  md:grid-cols-2 gap-y-8">
-        <div className=" space-y-4 flex flex-col items-center justify-center md:border-b ">
-          
-          <h1 className="text-[50px] font-semibold  text-center md:text-left">
-            BOOK NOW
-          </h1>
+      <div className="w-full  grid grid-rows-2  md:grid-cols-2 gap-y-8 md:grid-rows-none pt-12">
+        <div className=" space-y-4 flex flex-col items-center justify-center md:border-b p-12">
+          <Link href={"/User/Matches"}>
+            <h1 className="text-[50px] font-semibold  text-center md:text-left">
+              BOOK NOW
+            </h1>
+          </Link>
           <p className=" text-center md:text-left font-thin text-xl md:text-4xl">
             Booking your stadium Tickets
             <br /> has never been this simple. <br /> Our user-friendly
@@ -122,63 +99,82 @@ setMatch(values.data)
           </button>
         </div>
 
-        <div className="flex flex-col items-center justify-center bg-green-500 text-white">
+        <div className="flex flex-col items-center justify-center bg-green-500 text-white p-12">
           {/* text */}
           <h1 className=" w-[300px]">Next Match</h1>
           {/* Current date */}
-          <div className=" w-[300px] justify-end flex ">
-            24th June 2024
-          </div>
+          <div className=" w-[300px] justify-end flex ">24th June 2024</div>
           <div className="w-full items-center flex flex-col gap-2 p-8 md:p-0">
-            {match &&(match
-                .slice(match.length - 2, match.length).map((value:any, index:any) => {
-              return (
-                <div key={index} className="w-[300px] gap-2 grid">
-                  {/* time */}
-                  <div className="w-full flex justify-end">
-                    <h1 className="">{value.time}</h1>
-                  </div>
+            {match &&
+              match
+                .slice(match.length - 2, match.length)
+                .map((value: any, index: any) => {
+                  return (
+                    <div key={index} className="w-[300px] gap-2 grid">
+                      {/* time */}
+                      <div className="w-full flex justify-end">
+                        <h1 className="">{value.time}</h1>
+                      </div>
 
-                  {/* flags */}
+                      {/* flags */}
 
-                  <div className="grid grid-cols-3 place-items-center">
-
-                    <div>
-                      <img src="/countries/portugal.png" className="w-24 md:w-40" alt="img" />
+                      <div className="grid grid-cols-3 place-items-center">
+                        <div>
+                          <img
+                            src="/countries/portugal.png"
+                            className="w-24 md:w-40"
+                            alt="img"
+                          />
+                        </div>
+                        <p className="">vs</p>
+                        <div className="flex-1  justify-end flex">
+                          <img
+                            src="/countries/spain.png"
+                            className="w-24 md:w-40"
+                            alt="img"
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <p className="">vs</p>
-                    <div className="flex-1  justify-end flex">
-                      <img src="/countries/spain.png" className="w-24 md:w-40" alt="img" />
-                    </div>
-                </div>
-
-            </div>
-              );
-            }))}
+                  );
+                })}
           </div>
         </div>
 
-
-
-        <div className="grid grid-cols-1 md:grid-cols-2 md:col-span-2 place-items-center   w-full gap-y-[450px]">
-        {data.slice(data.length-4, data.length).map((values:any, index:any)=>{
-          return(
-            <div key={index} className=" grid grid-cols-1 place-items-center">
-             
-              <div className="text-xl">
-                {values.title}
-              </div>
-              <div className="flex space-x-2 flex-col md:flex-row items-center">
-               <p>CLICK TO VIEW</p>  <Link href={values.url}><p className="text-blue-500 text-center md:text-left underline">{values.url}</p></Link>
-              </div>
-              <div className="w-80 md:w-[500px] h-40 md:h-[250px] " dangerouslySetInnerHTML={{__html:values.embed}}/>
-
-            
-            </div>
-          )
-        })}
-        </div>
       </div>
+        {/* About */}
+        <div className="grid grid-cols-1 md:grid-cols-2 place-items-center border-4 w-full mt-12">
+          {/* image */}
+          <div className="grid place-items-center p-12">
+            <img src="/ceo.jpeg" alt="ceo"  className="border-white border-2"/>
+          </div>
+
+          {/* about */}
+          <div className="p-12">
+            "A strategic visionary, the CEO of the ticket booking system
+            spearheads innovations to enhance user experience, ensures seamless
+            booking operations, and fosters partnerships to expand market reach.
+            With a keen eye on emerging trends and challenges, they drive the
+            company's growth while prioritizing customer satisfaction and
+            trust."
+          </div>
+        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 md:col-span-2 place-items-center   w-full gap-y-[450px]">
+        {data
+          .slice(data.length - 4, data.length)
+          .map((values: any, index: any) => {
+            return (
+              <div key={index} className=" grid grid-cols-1 place-items-center">
+                <div className="text-xl">{values.title}</div>
+                <div
+                  className="w-80 md:w-[500px]  "
+                  dangerouslySetInnerHTML={{ __html: values.embed }}
+                />
+              </div>
+            );
+          })}
+      </div>
+      <Footer />
     </div>
   );
 }

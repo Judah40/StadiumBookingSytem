@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer";
 import Navigation from "@/components/Navigation";
 import Image from "next/image";
 import React from "react";
@@ -38,6 +39,9 @@ function About() {
           </div>
         </div>
       </div>
+
+
+      <Footer/>
     </div>
   );
 }

@@ -46,12 +46,12 @@ console.log(values)
             <div className='grid grid-cols-1 gap-4'>
 
           <div className='flex flex-col'>
-            <Field type="email" id="email" name="email" className="border-b h-12" placeholder="Email" />
+            <Field type="email" id="email" name="email" className="border-b h-12 p-2" placeholder="Email" />
             <ErrorMessage name="email" component="div" className="error text-red-500" />
           </div>
 
           <div className='flex flex-col ' >
-            <Field type="password" id="password" name="password" className="border-b h-12" placeholder="Password" />
+            <Field type="password" id="password" name="password" className="border-b h-12 p-2" placeholder="Password" />
             <ErrorMessage name="password" component="div" className="error text-red-500" />
           <div className='w-full items-end flex flex-col'>
         <p className='text-sm text-[#8C7E7E]'>Forgot your password?</p>

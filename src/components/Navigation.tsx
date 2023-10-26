@@ -7,19 +7,21 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
+import { BiUserCircle } from "react-icons/bi";
+import { useRouter } from "next/router";
 
 function Navigation() {
+
   const getUsername = async () => {
     const data = await supabase.auth.getSession();
     return data;
   };
 
-
-
   // states
   const [Navbar, setNavbar] = useState(false);
 
   const [usename, setUsername] = useState<any | null>(null);
+  const [user, setUser] = useState<any | boolean>(false);
   const menu = [
     { name: "Home", url: "/" },
     { name: "About", url: "/User/About" },
@@ -83,8 +85,41 @@ function Navigation() {
                 );
               })}
 
-              <li className="text-blue-500 flex gap-4 items-center">
-                {usename}
+              <li className="text-blue-500 flex gap-4 items-center group">
+                <BiUserCircle
+                  onClick={() => {
+                    setUser(!user);
+                  }}
+                  className={`text-white text-2xl cursor-pointer`}
+                />
+                <div
+                  className={`absolute right-12 top-20 w-60 h-32 gap-4 bg-gray-800 border-2 border-white rounded-lg shadow-lg z-10 ${
+                    user
+                      ? "flex  flex-col items-center justify-center"
+                      : "hidden"
+                  }  `}
+                >
+                  <div className="hover:text-white">
+                    <Link href={"/User/History"}>History</Link>
+                  </div>
+                  <div>{usename}</div>
+                  <div>
+                    
+                    <Link href={"/"}>
+                    <Button
+                  onClick={() => {
+                    supabase.auth.signOut();
+                    }}
+                  style={{ backgroundColor:"white",  }}
+                  variant="outlined"
+                  color="primary"
+                  size="small"
+                >
+                  SignOut{" "}
+                </Button>
+                    </Link> 
+                </div>
+                </div>
                 {/* <img
               onClick={()=>{
 
@@ -92,12 +127,8 @@ function Navigation() {
               src={supabase.auth.getSession.||''} className="rounded-full w-12 h-12 border"/> */}
               </li>
               <li>
-                <Button
-                  onClick={() => {
-                    supabase.auth.signOut()
-                }}
-                  variant="outlined" color="primary" size="small">SignOut </Button>
-                </li>
+               
+              </li>
             </ul>
           </div>
         </div>
