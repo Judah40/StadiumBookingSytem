@@ -46,7 +46,7 @@ function Matches() {
                       <div className="text-center space-y-2">
                         <img
                           src={`https://qlrmkunqfmyxzbyrvhfn.supabase.co/storage/v1/object/public/images/${values.team1_image_url}`}
-                          className="w-32"
+                          className="w-32 h-32"
                           alt="img"
                         />
                         <h1>{values.team1}</h1>
@@ -56,7 +56,7 @@ function Matches() {
                         {" "}
                         <img
                           src={`https://qlrmkunqfmyxzbyrvhfn.supabase.co/storage/v1/object/public/images/${values.team2_image_url}`}
-                          className="w-32"
+                          className="w-32 h-32"
                           alt="img"
                         />
                         <h1>{values.team2}</h1>
@@ -154,7 +154,6 @@ function Matches() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

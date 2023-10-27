@@ -174,7 +174,6 @@ function User() {
             );
           })}
       </div>
-      <Footer />
     </div>
   );
 }

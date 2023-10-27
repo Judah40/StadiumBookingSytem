@@ -9,7 +9,7 @@ import { supabase } from "@/app/Auth/supabase";
 import QRCode from "qrcode.react";
 import dynamic from "next/dynamic";
 import { ImCancelCircle } from "react-icons/im";
-import { QrReader } from 'react-qr-reader';
+import { QrReader } from "react-qr-reader";
 import Footer from "@/components/Footer";
 
 function Booking({
@@ -20,23 +20,21 @@ function Booking({
     team2: string;
     date: string;
     time: string;
-    id:number;
-    img1:string;
-    img2:string;
-    price:number;
-    game:string
+    id: number;
+    img1: string;
+    img2: string;
+    price: number;
+    game: string;
   };
 }) {
+  const getData = async () => {
+    const data = await supabase
+      .from("Matches")
+      .select("left, sold")
+      .eq("id", searchParams.id);
+    return data;
+  };
 
-
-  const getData=async()=>{
-
-    const data =await supabase
-    .from('Matches')
-    .select('left, sold')
-    .eq('id',searchParams.id)
-    return data
-    }
   console.log(searchParams);
 
   const getUsername = async () => {
@@ -44,41 +42,12 @@ function Booking({
     return data;
   };
   const [qrValue, setQrValue] = useState<string | null>(null);
-  const [data, setData] = useState('No result');
-
-
-
-  const downloadQR = () => {
-    console.log(canvasRef)
-    if (canvasRef.current) {
-      // create a "dummy" anchor element
-      const link = document.createElement('a');
-      console.log(link)
-      // get the canvas as data URL
-      link.href = (canvasRef.current as any).toDataURL();
-      // provide the name for the file
-      link.download = 'qrcode.png';
-      // simulate clicking the anchor link
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
-
-  const handleGenerateQRCode = async () => {
-    // This URL is supposed to be your backend endpoint that validates the QR code
- 
-    setQrValue(`${email}, ${searchParams.team1}, ${searchParams.team2}, ${searchParams.date}, ${searchParams.time}  `);
-
-    // Here, you'd typically also make a call to your backend to register
-    // the unique QR code value in your database along with its validity status.
-  };
+  const [data, setData] = useState("No result");
 
   //state
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const [showPopup, setShowPopup] = useState("");
   const canvasRef = useRef(null);
-
 
   //lpaypal
 
@@ -108,8 +77,8 @@ function Booking({
   const [selectedOption, setSelectedOption] = useState("");
   const [ticketNumber, setTicketNumber] = useState<any | null>(null);
   const [email, setEmail] = useState<any | null>(null);
-  const [qrcode, setQRcode] = useState<any | null>(null);
-
+  const [ticketLeft, setTicketLeft] = useState<any | null>(null);
+  const [ticketSold, setTicketSold] = useState<any | null>(null);
 
   const handleSelectChange = (e: any) => {
     setSelectedOption(e.target.value);
@@ -132,9 +101,10 @@ function Booking({
     });
     addPayment();
 
-    getData().then((data) => {
-      console.log(data.data)
-    })
+    getData().then((data: any) => {
+      setTicketLeft(data.data[0].left);
+      setTicketSold(data.data[0].sold);
+    });
   }, []);
   return (
     <div className="w-full ">
@@ -154,16 +124,16 @@ function Booking({
                 <div className="flex items-center justify-center gap-4">
                   <div className="flex flex-col items-center justify-center">
                     <img
-                          src={`https://qlrmkunqfmyxzbyrvhfn.supabase.co/storage/v1/object/public/images/${searchParams.img1}`}
-                          className="w-32"
+                      src={`https://qlrmkunqfmyxzbyrvhfn.supabase.co/storage/v1/object/public/images/${searchParams.img1}`}
+                      className="w-32"
                     />
                     {searchParams.team1}
                   </div>
                   vs
                   <div className="flex flex-col items-center justify-center">
                     <img
-                          src={`https://qlrmkunqfmyxzbyrvhfn.supabase.co/storage/v1/object/public/images/${searchParams.img2}`}
-                          className="w-32"
+                      src={`https://qlrmkunqfmyxzbyrvhfn.supabase.co/storage/v1/object/public/images/${searchParams.img2}`}
+                      className="w-32"
                     />
                     {searchParams.team2}
                   </div>
@@ -206,7 +176,7 @@ function Booking({
               <div className="w-9/12 flex">
                 <h1 className="font-semibold">Price for Normal Ticket:</h1>
                 <div className="flex-1  flex justify-end">
-                  Le{Number(searchParams.price)  + 100}
+                  Le{Number(searchParams.price) + 100}
                 </div>
               </div>
 
@@ -305,8 +275,50 @@ function Booking({
             <div className="w-full h-20 ">
               <button
                 onClick={() => {
-                  handleGenerateQRCode();
-                  setShowPopup("qrcode");
+                  //subtracting ticket
+                  const TotalTicketLeft =
+                    Number(ticketLeft) - Number(ticketNumber);
+                  const TicketSold = Number(ticketSold) + Number(ticketNumber);
+
+                  console.log({ TotalTicketLeft, TicketSold });
+                  //input into database
+                  supabase
+                    .from("Ticket")
+                    .insert([
+                      {
+                        ticket_number: ticketNumber,
+                        date: searchParams.date,
+                        game_name: searchParams.game,
+                        user: email,
+                        game_id:searchParams.id
+                      },
+                    ])
+                    .select()
+                    .then((val) => {
+                      console.log(val);
+                    });
+
+                  //update ticket  left
+
+                  supabase
+                    .from("Matches")
+                    .update({ left: TotalTicketLeft })
+                    .eq("game_name", searchParams.game)
+                    .select()
+                    .then((val) => {
+                      console.log(val);
+                    });
+                  //update ticket  sold
+
+                  supabase
+                    .from("Matches")
+                    .update({ sold: TicketSold })
+                    .eq("game_name", searchParams.game)
+                    .select()
+                    .then((val) => {
+                      console.log(val);
+                      alert("ticket booked");
+                    });
                 }}
                 type="button"
                 className="w-full h-full bg-orange-500 hover:bg-orange-400 rounded-full flex justify-center"
@@ -323,8 +335,49 @@ function Booking({
               <button
                 type="button"
                 onClick={() => {
-                  handleGenerateQRCode();
-                  setShowPopup("qrcode");
+                  //subtracting ticket
+                  const TotalTicketLeft =
+                    Number(ticketLeft) - Number(ticketNumber);
+                  const TicketSold = Number(ticketSold) + Number(ticketNumber);
+
+                  console.log({ TotalTicketLeft, TicketSold });
+                  //input into database
+                  supabase
+                    .from("Ticket")
+                    .insert([
+                      {
+                        ticket_number: ticketNumber,
+                        date: searchParams.date,
+                        game_name: searchParams.game,
+                        user: email,
+                      },
+                    ])
+                    .select()
+                    .then((val) => {
+                      console.log(val);
+                    });
+
+                  //update ticket  left
+
+                  supabase
+                    .from("Matches")
+                    .update({ left: TotalTicketLeft })
+                    .eq("game_name", searchParams.game)
+                    .select()
+                    .then((val) => {
+                      console.log(val);
+                    });
+                  //update ticket  sold
+
+                  supabase
+                    .from("Matches")
+                    .update({ sold: TicketSold })
+                    .eq("game_name", searchParams.game)
+                    .select()
+                    .then((val) => {
+                      console.log(val);
+                      alert("ticket booked");
+                    });
                 }}
                 className="w-full h-full bg-pink-900 hover:bg-pink-700 rounded-full flex justify-center"
               >
@@ -338,46 +391,34 @@ function Booking({
           </div>{" "}
         </div>
       ) : showPopup === "qrcode" ? (
-        qrValue && 
-        
-        
-        <div
-      className="popup-container fixed inset-0 flex justify-center
+        qrValue && (
+          <div
+            className="popup-container fixed inset-0 flex justify-center
     items-center bg-gray-900 bg-opacity-70 z-50 overflow-y-auto"
-    >
-      <div className="popup p-6 flex flex-col justify-center rounded-lg shadow-md bg-white  md:w-1/6 relative">
-        <div className="w-11/12  h-12  flex items-center justify-end">
-          <button 
-          onClick={()=>
-            setShowPopup("")
-          }
           >
-          <ImCancelCircle className="text-2xl text-red-500 hover:text-red-800"/>
-          </button>
-
-
-        </div>
-        <div className="w-full flex flex-col items-center">
-
-
-          <QRCode value={qrValue} ref={canvasRef} />
-        <h1>
-          Please Scan qrcode
-          </h1>  
-        <button onClick={()=>{
-          supabase.from('Ticket').update({left:"", sold:""})
-        }} type="button" className="w-full h-12 bg-green-500 rounded-full text-white">
-download qrcode
-        </button>
-        </div>
-
-      </div>{" "}
-    </div>
-        
+            <div className="popup p-6 flex flex-col justify-center rounded-lg shadow-md bg-white  md:w-1/6 relative">
+              <div className="w-11/12  h-12  flex items-center justify-end">
+                <button onClick={() => setShowPopup("")}>
+                  <ImCancelCircle className="text-2xl text-red-500 hover:text-red-800" />
+                </button>
+              </div>
+              <div className="w-full flex flex-col items-center">
+                <QRCode value={qrValue} ref={canvasRef} />
+                <h1>Please Scan qrcode</h1>
+                <button
+                  onClick={() => {
+                    supabase.from("Ticket").update({ left: "", sold: "" });
+                  }}
+                  type="button"
+                  className="w-full h-12 bg-green-500 rounded-full text-white"
+                >
+                  download qrcode
+                </button>
+              </div>
+            </div>{" "}
+          </div>
+        )
       ) : null}
-
-
-<Footer/>
 
     </div>
   );
