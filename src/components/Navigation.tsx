@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { BiUserCircle } from "react-icons/bi";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { types } from "util";
 import { Props } from "react-responsive-carousel/lib/ts/components/Thumbs";
 //types 
@@ -21,7 +21,7 @@ type props={
 const Navigation=()=> {
 
 const router = usePathname()
-
+const route = useRouter()
 
 
 
@@ -122,12 +122,11 @@ const router = usePathname()
                 >
                   <div>{usename}</div>
                   <div>
-                    <Link href={"/"}>
                       <Button
                         onClick={() => {
                           supabase.auth.signOut();
-                          window.location.reload();
-                        }}
+route.push("/Auth/Login")        
+                }}
                         style={{ backgroundColor: "white" }}
                         variant="outlined"
                         color="primary"
@@ -135,7 +134,6 @@ const router = usePathname()
                       >
                         SignOut{" "}
                       </Button>
-                    </Link>
                   </div>
                 </div>
                 {/* <img

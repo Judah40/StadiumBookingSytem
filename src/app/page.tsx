@@ -54,7 +54,7 @@ export default function Home() {
   }
 
   return (
-    <div style={{backgroundImage:'url("/175.jpg")'}} className="md:flex md:flex-col md:place-items-center">
+    <div style={{backgroundImage:'url("/175.jpg")'}} >
       <Login />
     </div>
   );

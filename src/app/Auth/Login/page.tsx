@@ -16,7 +16,9 @@ function Login() {
   // console.log(session)
   // },[session])
   return (
-    <div className=" grid grid-cols-1 md:grid-cols-2 h-screen place-items-center p-4 md:w-[800px] lg:w-[1000px]">
+    <div style={{backgroundImage:'url("/175.jpg")'}} className="md:flex md:flex-col md:place-items-center bg-green-500">
+
+    <div className=" grid grid-cols-1 md:grid-cols-2 h-screen place-items-center p-4 md:w-[800px] lg:w-[1000px] ">
       <div className=" bg-green-800 w-full md:shadow-md md:shadow-white md:h-[700px] md:grid md:grid-cols-1 hidden place-items-center">
         <img
           src={"/pitch.gif"}
@@ -78,6 +80,7 @@ function Login() {
           </h1>
         </div>
       </div>
+    </div>
     </div>
   );
 }
