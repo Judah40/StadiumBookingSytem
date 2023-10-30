@@ -23,7 +23,8 @@ function Booking({
     id: number;
     img1: string;
     img2: string;
-    price: number;
+    NormalPrice: number;
+    VIPprice: number;
     game: string;
   };
 }) {
@@ -84,13 +85,13 @@ function Booking({
     setSelectedOption(e.target.value);
     const selected = e.target.value;
     if (selected === "VIP") {
-      const total = Number(searchParams.price) + 100;
+      const total = Number(searchParams.VIPprice);
       const Price = total * ticketNumber;
       console.log(Price);
       setAmount(Price);
     } else {
-      console.log(Number(searchParams.price) * ticketNumber);
-      setAmount(Number(searchParams.price) * ticketNumber);
+      console.log(Number(searchParams.NormalPrice) * ticketNumber);
+      setAmount(Number(searchParams.NormalPrice) * ticketNumber);
     }
   };
   const PricePerTicket: number = 150;
@@ -170,13 +171,13 @@ function Booking({
               <div className="w-9/12 flex">
                 <h1 className="font-semibold">Price for VIP Ticket:</h1>
                 <div className="flex-1  flex justify-end">
-                  Le{Number(searchParams.price)}
+                  Le{searchParams.VIPprice}
                 </div>
               </div>
               <div className="w-9/12 flex">
                 <h1 className="font-semibold">Price for Normal Ticket:</h1>
                 <div className="flex-1  flex justify-end">
-                  Le{Number(searchParams.price) + 100}
+                  Le{searchParams.NormalPrice}
                 </div>
               </div>
 
@@ -208,13 +209,17 @@ function Booking({
                       const value: any = val.target.value;
 
                       if (selectedOption === "VIP") {
-                        const total = Number(searchParams.price) + 100;
-                        const Price = Number(searchParams.price) * value;
+                        const total = Number(searchParams.VIPprice);
+                        const Price = Number(searchParams.VIPprice) * value;
                         console.log(Price);
                         setAmount(Price);
                       } else {
-                        console.log(Number(searchParams.price) * ticketNumber);
-                        setAmount(Number(searchParams.price) * ticketNumber);
+                        console.log(
+                          Number(searchParams.NormalPrice) * ticketNumber
+                        );
+                        setAmount(
+                          Number(searchParams.NormalPrice) * ticketNumber
+                        );
                       }
                     }}
                   />
@@ -275,6 +280,8 @@ function Booking({
             <div className="w-full h-20 ">
               <button
                 onClick={() => {
+                  //close the popup
+                  setShowPopup("");
                   //subtracting ticket
                   const TotalTicketLeft =
                     Number(ticketLeft) - Number(ticketNumber);
@@ -290,7 +297,8 @@ function Booking({
                         date: searchParams.date,
                         game_name: searchParams.game,
                         user: email,
-                        game_id:searchParams.id
+                        game_id: searchParams.id,
+                        ticket_type: selectedOption,
                       },
                     ])
                     .select()
@@ -420,6 +428,7 @@ function Booking({
         )
       ) : null}
 
+      <Footer />
     </div>
   );
 }

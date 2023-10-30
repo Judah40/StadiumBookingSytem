@@ -24,7 +24,7 @@ function DashboardLayout({ children }: any) {
   return (
     <div className="flex h-screen  ">
       <div className="bg-blue-900 text-white md:w-64 w-40  border-r flex flex-col items-center gap-6 fixed  h-screen z-20">
-        <img src="/logo.png" className="p-4" />
+        <img src="/logoMain.png" className="p-4" />
         <ul className="flex flex-col w-full space-y-12 p-4">
           {sideBar.map((values) => {
             return (

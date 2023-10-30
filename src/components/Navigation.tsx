@@ -8,9 +8,22 @@ import React, { useEffect, useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { BiUserCircle } from "react-icons/bi";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
+import { types } from "util";
+import { Props } from "react-responsive-carousel/lib/ts/components/Thumbs";
+//types 
+type props={
+  isActive: boolean,
+  router: string
+}
 
-function Navigation() {
+
+const Navigation=()=> {
+
+const router = usePathname()
+
+
+
 
   const getUsername = async () => {
     const data = await supabase.auth.getSession();
@@ -22,10 +35,11 @@ function Navigation() {
 
   const [usename, setUsername] = useState<any | null>(null);
   const [user, setUser] = useState<any | boolean>(false);
+  const [isActive, setActive] = useState<any|null>(null)
   const menu = [
     { name: "Home", url: "/" },
     { name: "About", url: "/User/About" },
-    { name: "Matches", url: "/User/Matches" },
+    { name: "Tickets", url: "/User/History" },
     { name: "Contact", url: "/User/Contact" },
   ];
 
@@ -44,7 +58,7 @@ function Navigation() {
             <a href="#" className="">
               <div>
                 <img
-                  src={"/logo.png"}
+                  src={"/logoMain.png"}
                   alt="logo"
                   style={{ width: 140, height: 66 }} // Add this line
                 />{" "}
@@ -79,8 +93,15 @@ function Navigation() {
             <ul className="items-center justify-center space-y-8 md:flex md:space-x-6 md:space-y-0">
               {menu.map((values, index) => {
                 return (
-                  <li key={index} className="text-white">
-                    <Link href={values.url}>{values.name}</Link>
+                  <li key={index} className="text-white hover:text-blue-500">
+                    <Link href={values.url}
+                    onClick={()=>{
+                      setActive(values.name)
+                    }}
+                    className={`${values.url===router?"text-blue-500":"text-white"}`}
+                    >
+                      <h1 >{values.name}</h1>
+                    </Link>
                   </li>
                 );
               })}
@@ -99,26 +120,23 @@ function Navigation() {
                       : "hidden"
                   }  `}
                 >
-                  <div className="hover:text-white">
-                    <Link href={"/User/History"}>History</Link>
-                  </div>
                   <div>{usename}</div>
                   <div>
-                    
                     <Link href={"/"}>
-                    <Button
-                  onClick={() => {
-                    supabase.auth.signOut();
-                    }}
-                  style={{ backgroundColor:"white",  }}
-                  variant="outlined"
-                  color="primary"
-                  size="small"
-                >
-                  SignOut{" "}
-                </Button>
-                    </Link> 
-                </div>
+                      <Button
+                        onClick={() => {
+                          supabase.auth.signOut();
+                          window.location.reload();
+                        }}
+                        style={{ backgroundColor: "white" }}
+                        variant="outlined"
+                        color="primary"
+                        size="small"
+                      >
+                        SignOut{" "}
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
                 {/* <img
               onClick={()=>{
@@ -126,9 +144,7 @@ function Navigation() {
               }}
               src={supabase.auth.getSession.||''} className="rounded-full w-12 h-12 border"/> */}
               </li>
-              <li>
-               
-              </li>
+              <li></li>
             </ul>
           </div>
         </div>

@@ -73,10 +73,11 @@ function Matches() {
                             time: values.time,
                             id: values.id,
                             name: values.game_name,
-                            img1:values.team1_image_url,
-                            img2:values.team2_image_url,
-                            price:values.price,
-                            game:values.game_name
+                            img1: values.team1_image_url,
+                            img2: values.team2_image_url,
+                            NormalPrice: values.normal_price,
+                            VIPprice: values.vip_price,
+                            game: values.game_name,
                           },
                         }}
                       >
@@ -125,7 +126,7 @@ function Matches() {
                       </td>
                       <td className="py-2 px-6 text-center">
                         <Link
-                          href={{
+                           href={{
                             pathname: "/User/Matches/Booking",
                             query: {
                               team1: values.team1,
@@ -134,11 +135,13 @@ function Matches() {
                               time: values.time,
                               id: values.id,
                               name: values.game_name,
-                              img1:values.team1_image_url,
-                              img2:values.team1_image_url,
-                              price:values.price,
-                              game:values.game_name
-                            },                          }}
+                              img1: values.team1_image_url,
+                              img2: values.team2_image_url,
+                              NormalPrice: values.normal_price,
+                              VIPprice: values.vip_price,
+                              game: values.game_name,
+                            },
+                          }}
                         >
                           <button className="px-4 py-2 bg-[#9B00A5] text-white rounded">
                             Book Now
@@ -154,6 +157,8 @@ function Matches() {
           </div>
         </div>
       </div>
+
+      <Footer/>
     </div>
   );
 }

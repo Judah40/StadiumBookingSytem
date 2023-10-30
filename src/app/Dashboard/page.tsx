@@ -13,13 +13,13 @@ function DashboardPage() {
   const getAllData = async () => {
     return supabase
       .from("Matches")
-      .select("ticket_number,sold, left, game_name, price");
+      .select("normal_ticket_number,normal_price,sold, left, game_name, vip_ticket_number,vip_price");
   };
   const getSpecificData = async (val:any) => {
 
     return supabase
       .from("Matches")
-      .select("ticket_number,sold, left, game_name, price")
+      .select("normal_ticket_number,normal_price,sold, left, game_name, vip_ticket_number,vip_price")
       .eq('game_name',val)
   }
 
@@ -43,7 +43,7 @@ function DashboardPage() {
   const [value, setValue] = useState<any>(null)
   useEffect(() => {
     getAllData().then((val) => {
-      
+      console.log(val)
       setGameName(val.data);
     });
 
@@ -98,7 +98,7 @@ function DashboardPage() {
             {value === null
                 ? "Le 0"
                 :(value.map((val:any, index:any)=>{
-                  return <p key={index}>{val.ticket_number}</p>
+                  return <p key={index}> {val.normal_ticket_number} <br />  {val.vip_ticket_number}</p>
                 }))}            </h1>
           </div>
           <div>
@@ -109,7 +109,7 @@ function DashboardPage() {
               {value === null
                 ? "Le 0"
                 :(value.map((val:any, index:any)=>{
-                  return <p key={index}>{ `${Number(val.ticket_number) * Number(val.price) }`}</p>
+                  return <p key={index}>Normal: { `${Number(val.normal_ticket_number) * Number(val.normal_price) }`} <br /> VIP: { `${Number(val.vip_ticket_number) * Number(val.vip_price) }`}</p>
                 }))}
             </h1>
           </div>
@@ -138,7 +138,7 @@ function DashboardPage() {
             {value === null
                 ? "Le 0"
                 :(value.map((val:any, index:any)=>{
-                  return <p key={index}>{ `${Number(val.left) * Number(val.price) }`}</p>
+                  return <p key={index}>Normal: { `${Number(val.left) * Number(val.normal_price) }`} <br /> VIP: { `${Number(val.left) * Number(val.vip_price) }`}</p>
                 }))}
             </h1>
           </div>
@@ -166,7 +166,7 @@ function DashboardPage() {
             {value === null
                 ? "Le 0"
                 :(value.map((val:any, index:any)=>{
-                  return <p key={index}>{ `${Number(val.sold) * Number(val.price) }`}</p>
+                  return <p key={index}>Normal: { `${Number(val.sold) * Number(val.normal_price) }`} <br /> VIP:{ `${Number(val.sold) * Number(val.vip_price) }`}</p>
                 }))}
             </h1>
           </div>

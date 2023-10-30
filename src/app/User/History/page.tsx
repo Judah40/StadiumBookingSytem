@@ -7,6 +7,19 @@ import QRCode from "qrcode.react";
 import React, { useEffect, useState } from "react";
 
 function page() {
+  const downloadQR = () => {
+    const canvas:any = document.getElementById("qrcode");
+    console.log(canvas)
+    const pngUrl = canvas
+      .toDataURL("image/png")
+      .replace("image/png", "image/octet-stream");
+    let downloadLink = document.createElement("a");
+    downloadLink.href = pngUrl;
+    downloadLink.download = "123456.png";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  };
   //get users
   const users = async () => {
     const user = await supabase.auth.getSession();
@@ -42,7 +55,9 @@ function page() {
     <div>
       <Navigation />
       {/* history */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto">{
+
+        games?
         <table className="min-w-full bg-white border rounded-lg">
           <thead>
             <tr className="text-left border-b">
@@ -50,6 +65,7 @@ function page() {
               <th className="px-4 py-2">Date</th>
               <th className="px-4 py-2">Game Name</th>
               <th className="px-4 py-2">QRCODE</th>
+              <th className="px-4 py-2">Ticket Class</th>
               <th className="px-4 py-2">Action</th>
             </tr>
           </thead>
@@ -60,11 +76,23 @@ function page() {
                   <td className="px-4 py-2">{val.ticket_number}</td>
                   <td className="px-4 py-2">{val.date}</td>
                   <td className="px-4 py-2">{val.game_name}</td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2">{val.ticket_type}</td>
+                  <td className="px-4 py-2 grid place-items-center gap-4">
                     <QRCode
+                    id="qrcode"
+                    includeMargin={true}
+                    level={"H"}
                     value={`Ticket Number:${val.ticket_number},User_id:${user} game_name:${val.game_name}, date:${val.date}`}
                     style={{width:100, height:100}}
                     />
+                    <button
+                    className="w-40 h-12 bg-blue-500 text-white rounded-xl"
+                    onClick={()=>{
+                      downloadQR()
+                    }}
+                    >
+                      download QR Code
+                    </button>
                   </td>
                   <td className="px-4 py-2">
                     <button
@@ -112,7 +140,7 @@ function page() {
                             });
                         });
                       }}
-                      className="bg-blue-500 text-white text-base p-2 rounded-xl"
+                      className="bg-red-500 text-white text-base p-2 rounded-xl"
                     >
                       Cancel Ticket
                     </button>
@@ -120,8 +148,10 @@ function page() {
                 </tr>
               ))}
           </tbody>
-        </table>
+        </table>:"no data available, book ticket to view "}
       </div>
+
+      <Footer/>
     </div>
   );
 }

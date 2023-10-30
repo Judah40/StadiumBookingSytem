@@ -14,8 +14,10 @@ const validationSchema = Yup.object().shape({
   team1Flag: Yup.mixed().required("Team 1 flag is required"),
   team2: Yup.string().required("Team 2 is required"),
   team2Flag: Yup.mixed().required("Team 2 flag is required"),
-  ticketNumber: Yup.string().required("Ticket number is required"),
-  gameName: Yup.string().required("Game name is required"),
+  normalticketNumber: Yup.string().required("Ticket number is required"),
+  gameName: Yup.string().required("normal price is required"),
+  vipTicketPrice: Yup.string().required("vip price is required"),
+  vipTicketNumber: Yup.string().required("Vip Ticket Number is required"),
 });
 
 type values = {
@@ -28,22 +30,43 @@ type values = {
 
 const Matches: React.FC = () => {
   const [showPopUp, setShowPopUp] = useState(false);
+  const [gameName, setGameName] = useState<any>(null);
+
   //get data
   const data = async () => {
     let data = await supabase.from("Matches").select("*");
 
     return data;
   };
+  const getAllData = async () => {
+    return supabase
+      .from("Matches")
+      .select(
+        "normal_ticket_number,normal_price,sold, left, game_name, vip_ticket_number,vip_price"
+      );
+  };
 
+  const getSpecificData = async (val:any) => {
+
+    return supabase
+      .from("Matches")
+      .select("normal_ticket_number,normal_price,sold, left, game_name, vip_ticket_number,vip_price")
+      .eq('game_name',val)
+  }
   const [value, setValue] = useState<any | null>(null);
+  const [gamevalue, setGameValue] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [image1, setImage1] = useState<string | null>(null);
   const [image2, setImage2] = useState<string | null>(null);
-
+  const [action, setAction] = useState<string | null>(null);
   useEffect(() => {
     data().then((values) => {
       setValue(values.data);
       setIsLoading(false);
+    });
+
+    getAllData().then((val) => {
+      setGameName(val.data);
     });
   }, [value, image2]);
   return (
@@ -72,50 +95,102 @@ const Matches: React.FC = () => {
                   team1Flag: "",
                   team2: "",
                   team2Flag: "",
-                  ticketNumber: "",
+                  normalticketNumber: "",
+                  vipTicketNumber: "",
+                  vipTicketPrice: "",
                   gameName: "",
                 }}
                 validationSchema={validationSchema}
                 onSubmit={async (values, { setSubmitting }) => {
-                  const data = (img1:any,img2:any) => {
-                    return supabase.from("Matches").insert([
+                  console.log(values);
+                  console.log(gamevalue)
+                  const totalTicket =
+                    Number(values.normalticketNumber) +
+                    Number(values.vipTicketNumber);
+                  const data = (img1: any, img2: any) => {
+                    if (action === "add") {
+                      console.log("hi")
+                      return supabase.from("Matches").insert([
+                        {
+                          date: values.date,
+                          time: values.time,
+                          team1: values.team1,
+                          team2: values.team2,
+                          normal_ticket_number: values.normalticketNumber,
+                          vip_ticket_number: values.vipTicketNumber,
+                          vip_price: values.vipTicketPrice,
+                          left: totalTicket,
+                          game_name: `${values.team1}vs${values.team2}`,
+                          normal_price: values.gameName,
+                          team1_image_url: img1,
+                          team2_image_url: img2,
+                        },
+                      ]);
+                    }
+                    console.log({
+                      date: values.date,
+                      time: values.time,
+                      team1: values.team1,
+                      team2: values.team2,
+                      normal_ticket_number: values.normalticketNumber,
+                      vip_ticket_number:values.vipTicketNumber,
+                      vip_price:values.vipTicketPrice,
+                      left: totalTicket,
+                      game_name: `${values.team1}vs${values.team2}`,
+                      normal_price: values.gameName,
+                      team1_image_url: img1,
+                      team2_image_url: img2,
+                    })
+                    return supabase.from("Matches").update([
                       {
                         date: values.date,
                         time: values.time,
                         team1: values.team1,
                         team2: values.team2,
-                        ticket_number: values.ticketNumber,
-                        left: values.ticketNumber,
+                        normal_ticket_number: values.normalticketNumber,
+                        vip_ticket_number: values.vipTicketNumber,
+                        vip_price: values.vipTicketPrice,
+                        left: totalTicket,
                         game_name: `${values.team1}vs${values.team2}`,
-                        price: values.gameName,
+                        normal_price: values.gameName,
                         team1_image_url: img1,
                         team2_image_url: img2,
                       },
-                    ]);
+                    ]).eq('game_name', gamevalue).select()
+                    console.log(gamevalue)
                   };
 
-                  const getImages=async()=>{
-                  const image1=  await Supa.storage
-                    .from("images")
-                    .upload(`team1/team1` + uuidv4(), values.team1Flag)
+                  const getImages = async () => {
+                    const image1 = await Supa.storage
+                      .from("images")
+                      .upload(`team1/team1` + uuidv4(), values.team1Flag);
                     const image2 = await Supa.storage
-                    .from("images")
-                    .upload(`team2/team2` + uuidv4(), values.team2Flag)
+                      .from("images")
+                      .upload(`team2/team2` + uuidv4(), values.team2Flag);
 
-                    return { image1, image2}
-                  }
+                    return { image1, image2 };
+                  };
 
+                  getImages()
+                    .then((val) => {
+                      data(val.image1.data?.path, val.image2.data?.path).then(
+                        (data: any) => {
+                          console.log(data)
+                          if (data.status === 201) {
+                            setShowPopUp(false);
+                            alert("Successfully created a match and ticket");
+                          }else if(data.status === 200) {
+                            setShowPopUp(false);
+                            alert("Successfully updated a match and ticket");
 
-                  getImages().then((val)=>{
-                    data(val.image1.data?.path,val.image2.data?.path).then((data: any) => {
-                      if (data.status === 201) {
-                        alert("Successfully created a match and ticket");
-                        setShowPopUp(false);
-                      }
+                          }
+                        }
+                      );
                     })
+                    .catch((err) => {
+                      console.log(err.data);
+                    });
 
-                  })
-              
                   // await Supa.storage
                   //   .from("images")
                   //   .upload(`team1/team1` + uuidv4(), values.team1Flag)
@@ -141,10 +216,6 @@ const Matches: React.FC = () => {
                   //       })
                   //   });
 
-                    
-
-                     
-
                   console.log(values.team1Flag);
 
                   console.log(values.team1Flag);
@@ -153,6 +224,40 @@ const Matches: React.FC = () => {
               >
                 {({ isSubmitting, setFieldValue }) => (
                   <Form className="space-y-4">
+                    {action === "edit" ? (
+                      <div>
+                        <label>Select Team</label>
+                        <select
+                          id="dropdown"
+                          name="options"
+                          className="w-40 border"
+                          onChange={(val) => {
+                            getSpecificData(val.target.value).then((val:any) => {
+                              try {
+                                setGameValue(val.data[0].game_name)
+                                console.log(val.data[0].game_name)
+                                // setGameValue(val.data[0]);
+                              } catch (error) {
+                                console.log(error);
+                              }
+                            });
+                            val.preventDefault();
+                            console.log(val.target.value);
+                          }}
+                        >
+                          <option value=""></option>
+
+                          {gameName &&
+                            gameName.map((values: any, index: any) => {
+                              return (
+                                <option key={index} value={values.game_name}>
+                                  {values.game_name}
+                                </option>
+                              );
+                            })}
+                        </select>
+                      </div>
+                    ) : null}
                     <div>
                       <label
                         htmlFor="time"
@@ -279,31 +384,52 @@ const Matches: React.FC = () => {
                       />
                     </div>
 
+                    {/* normal ticket */}
                     <div>
                       <label
-                        htmlFor="ticketNumber"
+                        htmlFor="normalticketNumber"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Ticket Number:
+                        Normal Ticket Number:
                       </label>
                       <Field
                         type="text"
-                        name="ticketNumber"
+                        name="normalticketNumber"
                         className="mt-1 p-2 w-full border rounded-md"
                       />
                       <ErrorMessage
-                        name="ticketNumber"
+                        name="normalticketNumber"
+                        component="div"
+                        className="text-red-500 text-sm"
+                      />
+                    </div>
+                    {/* vip ticket number*/}
+                    <div>
+                      <label
+                        htmlFor="vipTicketNumber"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        VIP Ticket Number:
+                      </label>
+                      <Field
+                        type="text"
+                        name="vipTicketNumber"
+                        className="mt-1 p-2 w-full border rounded-md"
+                      />
+                      <ErrorMessage
+                        name="vipTicketNumber"
                         component="div"
                         className="text-red-500 text-sm"
                       />
                     </div>
 
+                    {/* normal ticket price */}
                     <div>
                       <label
                         htmlFor="gameName"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Ticekt Price:
+                        Normal Ticket Price:
                       </label>
                       <Field
                         type="text"
@@ -312,6 +438,25 @@ const Matches: React.FC = () => {
                       />
                       <ErrorMessage
                         name="gameName"
+                        component="div"
+                        className="text-red-500 text-sm"
+                      />
+                    </div>
+                    {/* vip ticket price */}
+                    <div>
+                      <label
+                        htmlFor="vipTicketPrice"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        VIP Tickt Price:
+                      </label>
+                      <Field
+                        type="text"
+                        name="vipTicketPrice"
+                        className="mt-1 p-2 w-full border rounded-md"
+                      />
+                      <ErrorMessage
+                        name="vipTicketPrice"
                         component="div"
                         className="text-red-500 text-sm"
                       />
@@ -368,15 +513,26 @@ const Matches: React.FC = () => {
         </div>
       </div>
 
-      <div className="w-32 h-12  ">
+      <div className="w-80 h-12 flex space-x-4">
         <button
           type="button"
           onClick={() => {
             setShowPopUp(true);
+            setAction("add");
           }}
           className="w-full h-full bg-green-500 rounded-xl text-sm text-white hover:bg-green-400"
         >
           Add Match
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setShowPopUp(true);
+            setAction("edit");
+          }}
+          className="w-full h-full bg-blue-500 rounded-xl text-sm text-white hover:bg-green-400"
+        >
+          Edit Match
         </button>
       </div>
     </DashboardLayout>

@@ -40,7 +40,7 @@ function About() {
         </div>
       </div>
 
-
+<Footer/>
     </div>
   );
 }

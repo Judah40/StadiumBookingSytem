@@ -32,7 +32,7 @@ function Contact() {
       <Navigation />
 
       {/* rest of page */}
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto p-4">
         <h1 className="text-4xl font-bold text-center my-6">Contact Us</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -109,6 +109,7 @@ function Contact() {
         </div>
       </div>
 
+<Footer/>
     </div>
   );
 }

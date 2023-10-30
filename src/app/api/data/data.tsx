@@ -23,6 +23,19 @@ return response
 
 //get Matches
 export const getMatches=async()=>{
-  const session = await supabase.from('Matches').select('*')
+  const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD' format
+
+  const session = await supabase.from('Matches').select('*').gt('date', today);
   return session
 }
+
+
+//old matches
+
+export const getOldMatches=async()=>{
+  const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD' format
+
+  const session = await supabase.from('Matches').select('*').lte('date', today);
+  return session
+}
+
